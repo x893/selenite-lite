@@ -17,7 +17,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-#include "usbd_composite.h"
 #include "usb_device.h"
 #include "usbd_core.h"
 #include "usbd_desc.h"
@@ -25,7 +24,7 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "usbd_composite.h"
 #include "usbd_conf.h"
 
 /* USER CODE END Includes */
@@ -37,15 +36,33 @@ extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
 
 /* USER CODE END PV */
 
+/* USER CODE BEGIN PFP */
+/* Private function prototypes -----------------------------------------------*/
+
+/* USER CODE END PFP */
+
 /* USB Device Core handle declaration. */
 USBD_HandleTypeDef hUsbDeviceFS;
+
+/*
+ * -- Insert your variables declaration here --
+ */
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
+
+/*
+ * -- Insert your external function declaration here --
+ */
+/* USER CODE BEGIN 1 */
+
+/* USER CODE END 1 */
 
 /**
   * Init USB device Library, add supported class and start the library
   * @retval None
   */
-
-void MX_USB_DEVICE_Init (void)
+void MX_USB_DEVICE_Init(void)
 {
   /* USER CODE BEGIN USB_DEVICE_Init_PreTreatment */
 
@@ -76,9 +93,31 @@ void MX_USB_DEVICE_Init (void)
     Error_Handler ();
   }
 
-  return;
+#if 0
 
   /* USER CODE END USB_DEVICE_Init_PreTreatment */
+
+  /* Init Device Library, add supported class and start the library. */
+  if (USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS) != USBD_OK)
+  {
+    Error_Handler();
+  }
+  if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC) != USBD_OK)
+  {
+    Error_Handler();
+  }
+  if (USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS) != USBD_OK)
+  {
+    Error_Handler();
+  }
+  if (USBD_Start(&hUsbDeviceFS) != USBD_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN USB_DEVICE_Init_PostTreatment */
+#endif
+  /* USER CODE END USB_DEVICE_Init_PostTreatment */
 }
 
 /**

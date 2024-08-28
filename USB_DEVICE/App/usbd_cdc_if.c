@@ -19,11 +19,10 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "usbd_composite.h"
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+#include "usbd_composite.h"
 #include "cat_if.h"
 #include "ptt_if.h"
 

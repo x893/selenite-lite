@@ -112,6 +112,7 @@ void Error_Handler(void);
 #define I2S2_RES_GPIO_Port GPIOB
 #define TX_Pin GPIO_PIN_6
 #define TX_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
