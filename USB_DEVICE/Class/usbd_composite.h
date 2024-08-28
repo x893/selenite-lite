@@ -33,10 +33,12 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 typedef struct
 {
+	uint32_t reserved;
 } USBD_COMP_HandleTypeDef;
 
 typedef struct
 {
+	uint32_t reserved;
 } USBD_COMP_ItfTypeDef;
 
 typedef struct
