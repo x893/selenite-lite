@@ -38,7 +38,7 @@ extern "C" {
 
 /* Exported functions prototypes ---------------------------------------------*/
 
-void Codec_Init (uint32_t);
+void Codec_Init (void);
 void Codec_Set_RX (void);
 void Codec_Set_TX (void);
 uint8_t Codec_AF_Vol (uint8_t);

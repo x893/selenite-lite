@@ -43,68 +43,68 @@
   */
 #ifndef USBD_AUDIO_FREQ
 /* AUDIO Class Config */
-#define USBD_AUDIO_FREQ                               96000U //++++++
+#define USBD_AUDIO_FREQ                               96000U
 #endif /* USBD_AUDIO_FREQ */
 
 #define AUDIO_OUT_PACKET                              (uint16_t)(((USBD_AUDIO_FREQ * 2U * 2U) / 1000U))
-#define AUDIO_DEFAULT_VOLUME                          70U
+#define AUDIO_DEFAULT_VOLUME                          70
 
 /* Number of sub-packets in the audio transfer buffer */
-#define AUDIO_OUT_PACKET_NUM                          2U     //++++++   
+#define AUDIO_OUT_PACKET_NUM                          2
 
 /* Total size of the audio transfer buffer */
 #define AUDIO_TOTAL_BUF_SIZE                          ((uint16_t)(AUDIO_OUT_PACKET * AUDIO_OUT_PACKET_NUM))
 
 #ifndef USBD_MAX_NUM_INTERFACES
-#define USBD_MAX_NUM_INTERFACES                       5U     //++++++
+#define USBD_MAX_NUM_INTERFACES                       5
 #endif /* USBD_MAX_NUM_INTERFACES */
 
-#define AUDIO_OUT_EP                                  0x03U  //++++++
-#define AUDIO_IN_EP                                   0x83U  //++++++
-#define AUDIO_CTRL_IF                                 0x02U  //++++++
-#define AUDIO_OUT_IF                                  0x03U  //++++++
-#define AUDIO_IN_IF                                   0x04U  //++++++
+#define AUDIO_OUT_EP                                  0x03
+#define AUDIO_IN_EP                                   0x83
+#define AUDIO_CTRL_IF                                 0x02
+#define AUDIO_OUT_IF                                  0x03
+#define AUDIO_IN_IF                                   0x04
 
-#define USB_AUDIO_CONFIG_DESC_SIZ                     192U   //++++++
+#define USB_AUDIO_CONFIG_DESC_SIZ                     192
 
-#define AUDIO_INTERFACE_DESC_SIZE                     0x09U
-#define USB_AUDIO_DESC_SIZ                            0x09U
-#define AUDIO_STANDARD_ENDPOINT_DESC_SIZE             0x09U
-#define AUDIO_STREAMING_ENDPOINT_DESC_SIZE            0x07U
+#define AUDIO_INTERFACE_DESC_SIZE                     0x09
+#define USB_AUDIO_DESC_SIZ                            0x09
+#define AUDIO_STANDARD_ENDPOINT_DESC_SIZE             0x09
+#define AUDIO_STREAMING_ENDPOINT_DESC_SIZE            0x07
 
-#define AUDIO_DESCRIPTOR_TYPE                         0x21U
-#define USB_DEVICE_CLASS_AUDIO                        0x01U
-#define AUDIO_SUBCLASS_AUDIOCONTROL                   0x01U
-#define AUDIO_SUBCLASS_AUDIOSTREAMING                 0x02U
-#define AUDIO_PROTOCOL_UNDEFINED                      0x00U
-#define AUDIO_STREAMING_GENERAL                       0x01U
-#define AUDIO_STREAMING_FORMAT_TYPE                   0x02U
+#define AUDIO_DESCRIPTOR_TYPE                         0x21
+#define USB_DEVICE_CLASS_AUDIO                        0x01
+#define AUDIO_SUBCLASS_AUDIOCONTROL                   0x01
+#define AUDIO_SUBCLASS_AUDIOSTREAMING                 0x02
+#define AUDIO_PROTOCOL_UNDEFINED                      0x00
+#define AUDIO_STREAMING_GENERAL                       0x01
+#define AUDIO_STREAMING_FORMAT_TYPE                   0x02
 
 /* Audio Descriptor Types */
-#define AUDIO_INTERFACE_DESCRIPTOR_TYPE               0x24U
-#define AUDIO_ENDPOINT_DESCRIPTOR_TYPE                0x25U
+#define AUDIO_INTERFACE_DESCRIPTOR_TYPE               0x24
+#define AUDIO_ENDPOINT_DESCRIPTOR_TYPE                0x25
 
 /* Audio Control Interface Descriptor Subtypes */
-#define AUDIO_CONTROL_HEADER                          0x01U
-#define AUDIO_CONTROL_INPUT_TERMINAL                  0x02U
-#define AUDIO_CONTROL_OUTPUT_TERMINAL                 0x03U
-#define AUDIO_CONTROL_FEATURE_UNIT                    0x06U
+#define AUDIO_CONTROL_HEADER                          0x01
+#define AUDIO_CONTROL_INPUT_TERMINAL                  0x02
+#define AUDIO_CONTROL_OUTPUT_TERMINAL                 0x03
+#define AUDIO_CONTROL_FEATURE_UNIT                    0x06
 
-#define AUDIO_INPUT_TERMINAL_DESC_SIZE                0x0CU
-#define AUDIO_OUTPUT_TERMINAL_DESC_SIZE               0x09U
-#define AUDIO_STREAMING_INTERFACE_DESC_SIZE           0x07U
+#define AUDIO_INPUT_TERMINAL_DESC_SIZE                0x0C
+#define AUDIO_OUTPUT_TERMINAL_DESC_SIZE               0x09
+#define AUDIO_STREAMING_INTERFACE_DESC_SIZE           0x07
 
-#define AUDIO_CONTROL_MUTE                            0x0001U
+#define AUDIO_CONTROL_MUTE                            0x0001
 
-#define AUDIO_FORMAT_TYPE_I                           0x01U
-#define AUDIO_FORMAT_TYPE_III                         0x03U
+#define AUDIO_FORMAT_TYPE_I                           0x01
+#define AUDIO_FORMAT_TYPE_III                         0x03
 
-#define AUDIO_ENDPOINT_GENERAL                        0x01U
+#define AUDIO_ENDPOINT_GENERAL                        0x01
 
-#define AUDIO_REQ_GET_CUR                             0x81U
-#define AUDIO_REQ_SET_CUR                             0x01U
+#define AUDIO_REQ_GET_CUR                             0x81
+#define AUDIO_REQ_SET_CUR                             0x01
 
-#define AUDIO_OUT_STREAMING_CTRL                      0x02U
+#define AUDIO_OUT_STREAMING_CTRL                      0x02
 
 
 /* Audio Commands enumeration */

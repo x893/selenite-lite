@@ -39,29 +39,29 @@ extern "C" {
 
 typedef enum
 {
-  MODE_LSB = 0x00,
-  MODE_USB = 0x01,
-  MODE_CW  = 0x02,  //CW-USB
-  MODE_CWR = 0x03,  //CW-LSB
-  MODE_AM  = 0x04,
-  MODE_FM  = 0x08,
-  MODE_DIG = 0x0A,  //DIG-U
-  MODE_PKT = 0x0C   //DIG-L
+	MODE_LSB = 0x00,
+	MODE_USB = 0x01,
+	MODE_CW  = 0x02,  //CW-USB
+	MODE_CWR = 0x03,  //CW-LSB
+	MODE_AM  = 0x04,
+	MODE_FM  = 0x08,
+	MODE_DIG = 0x0A,  //DIG-U
+	MODE_PKT = 0x0C   //DIG-L
 } Mode;
 
 typedef struct
 {
-  Mode     mode;
-  uint32_t vfoa_bcd;
-  uint32_t vfob_bcd;
-  uint32_t vfoa;
-  uint32_t vfob;
-  uint8_t  vfo;
-  uint8_t  split;
-  uint8_t  is_tx;
-  uint32_t sysclock;
-  uint8_t  systicks;
-  uint32_t displayed;
+	Mode     mode;
+	uint32_t vfoa_bcd;
+	uint32_t vfob_bcd;
+	uint32_t vfoa;
+	uint32_t vfob;
+	uint32_t displayed;
+	uint32_t sysclock;
+	uint8_t  vfo;
+	uint8_t  split;
+	uint8_t  is_tx;
+	uint8_t  systicks;
 } TRX_TypeDef;
 
 /* USER CODE END ET */

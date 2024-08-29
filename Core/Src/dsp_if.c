@@ -17,7 +17,7 @@
   */
 
 
-/* Includes ------------------------------------------------------------------*/
+  /* Includes ------------------------------------------------------------------*/
 #include "dsp_if.h"
 #include "codec_if.h"
 
@@ -47,10 +47,10 @@ DSP_Buff_TypeDef  dsp_in_buff;
  *
  */
 
-void HAL_I2SEx_TxRxHalfCpltCallback (I2S_HandleTypeDef *hi2s)
+void HAL_I2SEx_TxRxHalfCpltCallback(I2S_HandleTypeDef* hi2s)
 {
-  DSP_Out_Buff_Read (i2s_buff.tx, I2S_BUFF_HALF_SIZE);
-  DSP_In_Buff_Write (i2s_buff.rx, I2S_BUFF_HALF_SIZE);
+	DSP_Out_Buff_Read(i2s_buff.tx, I2S_BUFF_HALF_SIZE);
+	DSP_In_Buff_Write(i2s_buff.rx, I2S_BUFF_HALF_SIZE);
 }
 
 /**
@@ -60,10 +60,10 @@ void HAL_I2SEx_TxRxHalfCpltCallback (I2S_HandleTypeDef *hi2s)
  *
  */
 
-void HAL_I2SEx_TxRxCpltCallback  (I2S_HandleTypeDef *hi2s)
+void HAL_I2SEx_TxRxCpltCallback(I2S_HandleTypeDef* hi2s)
 {
-  DSP_Out_Buff_Read (&i2s_buff.tx [I2S_BUFF_HALF_SIZE], I2S_BUFF_HALF_SIZE);
-  DSP_In_Buff_Write (&i2s_buff.rx [I2S_BUFF_HALF_SIZE], I2S_BUFF_HALF_SIZE);
+	DSP_Out_Buff_Read(&i2s_buff.tx[I2S_BUFF_HALF_SIZE], I2S_BUFF_HALF_SIZE);
+	DSP_In_Buff_Write(&i2s_buff.rx[I2S_BUFF_HALF_SIZE], I2S_BUFF_HALF_SIZE);
 }
 
 /**
@@ -71,15 +71,15 @@ void HAL_I2SEx_TxRxCpltCallback  (I2S_HandleTypeDef *hi2s)
  *
  */
 
-void i2s_buff_init (void)
+void i2s_buff_init(void)
 {
-  for (uint32_t i = 0U; i < I2S_BUFF_SIZE; i++)
-  {
-    i2s_buff.rx [i] = 0U;
-    i2s_buff.tx [i] = 0U;
-  }
+	for (uint32_t i = 0U; i < I2S_BUFF_SIZE; i++)
+	{
+		i2s_buff.rx[i] = 0U;
+		i2s_buff.tx[i] = 0U;
+	}
 
-  HAL_I2SEx_TransmitReceive_DMA (&I2S_IF, i2s_buff.tx, i2s_buff.rx, I2S_BUFF_SIZE);
+	HAL_I2SEx_TransmitReceive_DMA(&I2S_IF, i2s_buff.tx, i2s_buff.rx, I2S_BUFF_SIZE);
 }
 
 
@@ -90,17 +90,17 @@ void i2s_buff_init (void)
  *
  */
 
-void dsp_out_buff_write (uint16_t i, uint16_t q)
+void dsp_out_buff_write(uint16_t i, uint16_t q)
 {
-  dsp_out_buff.i [dsp_out_buff.wr_ptr] = i;
-  dsp_out_buff.q [dsp_out_buff.wr_ptr] = q;
+	dsp_out_buff.i[dsp_out_buff.wr_ptr] = i;
+	dsp_out_buff.q[dsp_out_buff.wr_ptr] = q;
 
-  dsp_out_buff.wr_ptr++;
+	dsp_out_buff.wr_ptr++;
 
-  if (dsp_out_buff.wr_ptr == DSP_BUFF_SIZE)
-  {
-    dsp_out_buff.wr_ptr = 0U;
-  }
+	if (dsp_out_buff.wr_ptr == DSP_BUFF_SIZE)
+	{
+		dsp_out_buff.wr_ptr = 0U;
+	}
 }
 
 /**
@@ -113,70 +113,70 @@ void dsp_out_buff_write (uint16_t i, uint16_t q)
  *
  */
 
-void DSP_Out_Buff_Write (uint8_t *pbuf, uint32_t size)
+void DSP_Out_Buff_Write(uint8_t* pbuf, uint32_t size)
 {
-  uint16_t *buff = (uint16_t*) pbuf;
+	uint16_t* buff = (uint16_t*)pbuf;
 
-  size = size / 2U;
+	size = size / 2U;
 
-  uint16_t gap;
+	uint16_t gap;
 
-  if (dsp_out_buff.buff_enable == 0U)
-  {
-    dsp_out_buff.wr_ptr = dsp_out_buff.rd_ptr + DSP_BUFF_HALF_SIZE;
+	if (dsp_out_buff.buff_enable == 0U)
+	{
+		dsp_out_buff.wr_ptr = dsp_out_buff.rd_ptr + DSP_BUFF_HALF_SIZE;
 
-    if (dsp_out_buff.wr_ptr >= DSP_BUFF_SIZE)
-    {
-      dsp_out_buff.wr_ptr -= DSP_BUFF_SIZE;
-    }
+		if (dsp_out_buff.wr_ptr >= DSP_BUFF_SIZE)
+		{
+			dsp_out_buff.wr_ptr -= DSP_BUFF_SIZE;
+		}
 
-    dsp_out_buff.buff_enable = 1U;
-  }
+		dsp_out_buff.buff_enable = 1U;
+	}
 
-  gap = dsp_out_buff.wr_ptr;
+	gap = dsp_out_buff.wr_ptr;
 
-  if (dsp_out_buff.rd_ptr > dsp_out_buff.wr_ptr)
-  {
-    gap += DSP_BUFF_SIZE;
-  }
+	if (dsp_out_buff.rd_ptr > dsp_out_buff.wr_ptr)
+	{
+		gap += DSP_BUFF_SIZE;
+	}
 
-  gap -= dsp_out_buff.rd_ptr;
+	gap -= dsp_out_buff.rd_ptr;
 
-  if (gap > (3U * DSP_BUFF_SIZE / 4U))  /* wr is faster */
-  {
-    if (dsp_out_buff.wr_ptr < 1U)
-    {
-      dsp_out_buff.wr_ptr += DSP_BUFF_SIZE;
-    }
+	if (gap > (3U * DSP_BUFF_SIZE / 4U))  /* wr is faster */
+	{
+		if (dsp_out_buff.wr_ptr < 1U)
+		{
+			dsp_out_buff.wr_ptr += DSP_BUFF_SIZE;
+		}
 
-    dsp_out_buff.wr_ptr--;              /* shift wr_ptr backward */
-  }
+		dsp_out_buff.wr_ptr--;              /* shift wr_ptr backward */
+	}
 
-  if (gap < (DSP_BUFF_SIZE / 4U))       /* rd is faster */
-  {
-    dsp_out_buff.wr_ptr++;              /* shift wr_ptr forward */
+	if (gap < (DSP_BUFF_SIZE / 4U))       /* rd is faster */
+	{
+		dsp_out_buff.wr_ptr++;              /* shift wr_ptr forward */
 
-    if (dsp_out_buff.wr_ptr >= DSP_BUFF_SIZE)
-    {
-      dsp_out_buff.wr_ptr -= DSP_BUFF_SIZE;
-    }
-  }
+		if (dsp_out_buff.wr_ptr >= DSP_BUFF_SIZE)
+		{
+			dsp_out_buff.wr_ptr -= DSP_BUFF_SIZE;
+		}
+	}
 
-  for (uint32_t i = 0; i < size; i += 2U)
-  {
-    dsp_out_buff_write (buff [i + 0], buff [i + 1]);
-  }
+	for (uint32_t i = 0; i < size; i += 2U)
+	{
+		dsp_out_buff_write(buff[i + 0], buff[i + 1]);
+	}
 
-  /* repeat last sample for synchronization when wr_ptr is shifted forward */
+	/* repeat last sample for synchronization when wr_ptr is shifted forward */
 
-  dsp_out_buff_write (buff [size - 2], buff [size - 1]);
+	dsp_out_buff_write(buff[size - 2], buff[size - 1]);
 
-  if (dsp_out_buff.wr_ptr < 1U)
-  {
-    dsp_out_buff.wr_ptr += DSP_BUFF_SIZE;
-  }
+	if (dsp_out_buff.wr_ptr < 1U)
+	{
+		dsp_out_buff.wr_ptr += DSP_BUFF_SIZE;
+	}
 
-  dsp_out_buff.wr_ptr--;
+	dsp_out_buff.wr_ptr--;
 }
 
 /**
@@ -185,13 +185,13 @@ void DSP_Out_Buff_Write (uint8_t *pbuf, uint32_t size)
  * This function writes to DSP Out buffer zeros
  */
 
-void DSP_Out_Buff_Mute (void)
+void DSP_Out_Buff_Mute(void)
 {
-  for (uint32_t i = 0U; i < DSP_BUFF_SIZE; i++)
-  {
-    dsp_out_buff.i [i] = 0U;
-    dsp_out_buff.q [i] = 0U;
-  }
+	for (uint32_t i = 0U; i < DSP_BUFF_SIZE; i++)
+	{
+		dsp_out_buff.i[i] = 0U;
+		dsp_out_buff.q[i] = 0U;
+	}
 }
 
 /**
@@ -201,21 +201,21 @@ void DSP_Out_Buff_Mute (void)
  *@param Number of samples to write
  */
 
-void DSP_Out_Buff_Read (uint16_t *pbuf, uint16_t size)
+void DSP_Out_Buff_Read(uint16_t* pbuf, uint16_t size)
 {
-  for (uint16_t k = 0U; k < size; k += 2U)
-  {
-    pbuf [k + 0] = dsp_out_buff.i [dsp_out_buff.rd_ptr];
-    pbuf [k + 1] = dsp_out_buff.q [dsp_out_buff.rd_ptr];
+	for (uint16_t k = 0U; k < size; k += 2U)
+	{
+		pbuf[k + 0] = dsp_out_buff.i[dsp_out_buff.rd_ptr];
+		pbuf[k + 1] = dsp_out_buff.q[dsp_out_buff.rd_ptr];
 
-    dsp_out_buff.rd_ptr++;
+		dsp_out_buff.rd_ptr++;
 
-    if (dsp_out_buff.rd_ptr >= DSP_BUFF_SIZE)
-    {
-      dsp_out_buff.rd_ptr = 0U;
-    }
-  }
-  /* mix CW tone to speaker signal here*/
+		if (dsp_out_buff.rd_ptr >= DSP_BUFF_SIZE)
+		{
+			dsp_out_buff.rd_ptr = 0U;
+		}
+	}
+	/* mix CW tone to speaker signal here*/
 }
 
 /**
@@ -224,17 +224,17 @@ void DSP_Out_Buff_Read (uint16_t *pbuf, uint16_t size)
  * @param i, q are samples to write
  */
 
-void dsp_in_buff_write (uint16_t i, uint16_t q)
+void dsp_in_buff_write(uint16_t i, uint16_t q)
 {
-  dsp_in_buff.i [dsp_in_buff.wr_ptr] = i;
-  dsp_in_buff.q [dsp_in_buff.wr_ptr] = q;
+	dsp_in_buff.i[dsp_in_buff.wr_ptr] = i;
+	dsp_in_buff.q[dsp_in_buff.wr_ptr] = q;
 
-  dsp_in_buff.wr_ptr++;
+	dsp_in_buff.wr_ptr++;
 
-  if (dsp_in_buff.wr_ptr == DSP_BUFF_SIZE)
-  {
-    dsp_in_buff.wr_ptr = 0U;
-  }
+	if (dsp_in_buff.wr_ptr == DSP_BUFF_SIZE)
+	{
+		dsp_in_buff.wr_ptr = 0U;
+	}
 }
 
 /**
@@ -247,57 +247,45 @@ void dsp_in_buff_write (uint16_t i, uint16_t q)
  *
  */
 
-void DSP_In_Buff_Write (uint16_t *pbuf, uint16_t size)
+void DSP_In_Buff_Write(uint16_t* pbuf, uint16_t size)
 {
-  uint16_t gap = 0U;
+	uint16_t gap = 0U;
 
-  if (dsp_in_buff.buff_enable)
-  {
-    gap = dsp_in_buff.wr_ptr;
+	if (dsp_in_buff.buff_enable)
+	{
+		gap = dsp_in_buff.wr_ptr;
 
-    if (dsp_in_buff.rd_ptr > dsp_in_buff.wr_ptr)
-    {
-      gap += DSP_BUFF_SIZE;
-    }
+		if (dsp_in_buff.rd_ptr > dsp_in_buff.wr_ptr)
+			gap += DSP_BUFF_SIZE;
+		gap -= dsp_in_buff.rd_ptr;
+	}
 
-    gap -= dsp_in_buff.rd_ptr;
-  }
+	if (gap > (3U * DSP_BUFF_SIZE / 4U))  /* wr is faster */
+	{
+		if (dsp_in_buff.wr_ptr < 1U)
+			dsp_in_buff.wr_ptr += DSP_BUFF_SIZE;
+		dsp_in_buff.wr_ptr--;               /* shift wr_ptr backward */
+	}
 
-  if (gap > (3U * DSP_BUFF_SIZE / 4U))  /* wr is faster */
-  {
-    if (dsp_in_buff.wr_ptr < 1U)
-    {
-      dsp_in_buff.wr_ptr += DSP_BUFF_SIZE;
-    }
+	if (gap < (DSP_BUFF_SIZE / 4U))       /* rd is faster */
+	{
+		dsp_in_buff.wr_ptr++;               /* shift wr_ptr forward */
 
-    dsp_in_buff.wr_ptr--;               /* shift wr_ptr backward */
-  }
+		if (dsp_in_buff.wr_ptr >= DSP_BUFF_SIZE)
+			dsp_in_buff.wr_ptr -= DSP_BUFF_SIZE;
+	}
 
-  if (gap < (DSP_BUFF_SIZE / 4U))       /* rd is faster */
-  {
-    dsp_in_buff.wr_ptr++;               /* shift wr_ptr forward */
+	for (uint32_t i = 0; i < size; i += 2U)
+		dsp_in_buff_write(pbuf[i + 0], pbuf[i + 1]);
 
-    if (dsp_in_buff.wr_ptr >= DSP_BUFF_SIZE)
-    {
-      dsp_in_buff.wr_ptr -= DSP_BUFF_SIZE;
-    }
-  }
+	/* repeat last sample for synchronization when wr_ptr is shifted forward */
 
-  for (uint32_t i = 0; i < size; i += 2U)
-  {
-    dsp_in_buff_write (pbuf [i + 0], pbuf [i + 1]);
-  }
+	dsp_in_buff_write(pbuf[size - 2], pbuf[size - 1]);
 
-  /* repeat last sample for synchronization when wr_ptr is shifted forward */
+	if (dsp_in_buff.wr_ptr < 1U)
+		dsp_in_buff.wr_ptr += DSP_BUFF_SIZE;
 
-  dsp_in_buff_write (pbuf [size - 2], pbuf [size - 1]);
-
-  if (dsp_in_buff.wr_ptr < 1U)
-  {
-    dsp_in_buff.wr_ptr += DSP_BUFF_SIZE;
-  }
-
-  dsp_in_buff.wr_ptr--;
+	dsp_in_buff.wr_ptr--;
 }
 
 /**
@@ -307,56 +295,32 @@ void DSP_In_Buff_Write (uint16_t *pbuf, uint16_t size)
  * @param Number of bytes to write
  */
 
-void DSP_In_Buff_Read (uint8_t *pbuf, uint32_t size)
+void DSP_In_Buff_Read(uint8_t* pbuf, uint32_t size)
 {
-  uint16_t *buff = (uint16_t*) pbuf;
+	uint16_t* buff = (uint16_t*)pbuf;
 
-  size = size / 2U;
+	size = size / 2U;
 
-  if (dsp_in_buff.buff_enable == 0U)
-  {
-    dsp_in_buff.rd_ptr = dsp_in_buff.wr_ptr + DSP_BUFF_HALF_SIZE;
+	if (dsp_in_buff.buff_enable == 0U)
+	{
+		dsp_in_buff.rd_ptr = dsp_in_buff.wr_ptr + DSP_BUFF_HALF_SIZE;
 
-    if (dsp_in_buff.rd_ptr >= DSP_BUFF_SIZE)
-    {
-      dsp_in_buff.rd_ptr = 0U;
-    }
+		if (dsp_in_buff.rd_ptr >= DSP_BUFF_SIZE)
+			dsp_in_buff.rd_ptr = 0U;
 
-    dsp_in_buff.buff_enable = 1U;
-  }
+		dsp_in_buff.buff_enable = 1U;
+	}
 
-  for (uint32_t i = 0U; i < size; i += 2U)
-  {
-    buff [i + 0] = dsp_in_buff.i [dsp_in_buff.rd_ptr];
-    buff [i + 1] = dsp_in_buff.q [dsp_in_buff.rd_ptr];
+	for (uint32_t i = 0U; i < size; i += 2U)
+	{
+		buff[i + 0] = dsp_in_buff.i[dsp_in_buff.rd_ptr];
+		buff[i + 1] = dsp_in_buff.q[dsp_in_buff.rd_ptr];
 
-    dsp_in_buff.rd_ptr++;
+		dsp_in_buff.rd_ptr++;
 
-    if (dsp_in_buff.rd_ptr >= DSP_BUFF_SIZE)
-    {
-      dsp_in_buff.rd_ptr = 0U;
-    }
-  }
-}
-
-/**
- * @brief This function sets DSP to RX mode
- *
- */
-
-void DSP_Set_RX (void)
-{
-  Codec_Set_RX ();
-}
-
-/**
- * @brief This function sets DSP to TX mode
- *
- */
-
-void DSP_Set_TX (void)
-{
-  Codec_Set_TX ();
+		if (dsp_in_buff.rd_ptr >= DSP_BUFF_SIZE)
+			dsp_in_buff.rd_ptr = 0U;
+	}
 }
 
 /**
@@ -364,7 +328,7 @@ void DSP_Set_TX (void)
  *
  */
 
-void DSP_Set_Mode (uint8_t mode)
+void DSP_Set_Mode(uint8_t mode)
 {
 
 }
@@ -374,12 +338,12 @@ void DSP_Set_Mode (uint8_t mode)
  *
  */
 
-void DSP_Init (void)
+void DSP_Init(void)
 {
-  i2s_buff_init ();
+	i2s_buff_init();
 
-  Codec_Init (USBD_AUDIO_FREQ);
-  Codec_AF_Vol (20U);
+	Codec_Init();
+	Codec_AF_Vol(20U);
 }
 
 /****END OF FILE****/

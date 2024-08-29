@@ -16,55 +16,52 @@
   *******************************************************************************
   */
 
-/* Includes ------------------------------------------------------------------*/
+  /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cat_if.h"
 #include "ptt_if.h"
 #include "usbd_cdc_if.h"
 
 /* Private typedef -----------------------------------------------------------*/
-typedef struct
-{
-  uint8_t  is_enable;
-  uint8_t  is_connected;
-  uint8_t  buff [CAT_BUFF_SIZE];
-  uint32_t buff_wr_time;
-  uint16_t wr_ptr;
-  uint16_t rd_ptr;
+typedef struct {
+	uint8_t  is_enable;
+	uint8_t  is_connected;
+	uint8_t  buff[CAT_BUFF_SIZE];
+	uint32_t buff_wr_time;
+	uint16_t wr_ptr;
+	uint16_t rd_ptr;
 } CAT_TypeDef;
 
 
-typedef enum
-{
-//  FT817_LOCK_ON       = 0x00,
-//  FT817_LOCK_OFF      = 0x80,
-    FT817_PTT_ON        = 0x08,
-    FT817_PTT_OFF       = 0x88,
-    FT817_SET_FREQ      = 0x01,
-    FT817_MODE_SET      = 0x07,
-//  FT817_RIT_ON        = 0x05,
-//  FT817_RIT_OFF       = 0x85,
-//  FT817_RIT_OFFSET    = 0xF5,
-    FT817_TOGGLE_VFO    = 0x81,
-    FT817_SPLIT_ON      = 0x02,
-    FT817_SPLIT_OFF     = 0x82,
-//  FT817_READ_RX_STATE = 0xE7,
-    FT817_READ_TX_STATE = 0xF7,
-    FT817_GET_FREQ      = 0x03,
-//  FT817_PWR_ON        = 0x0F,
-//  FT817_PWR_OFF       = 0x8F,
+typedef enum {
+	//  FT817_LOCK_ON       = 0x00,
+	//  FT817_LOCK_OFF      = 0x80,
+	FT817_PTT_ON = 0x08,
+	FT817_PTT_OFF = 0x88,
+	FT817_SET_FREQ = 0x01,
+	FT817_MODE_SET = 0x07,
+	//  FT817_RIT_ON        = 0x05,
+	//  FT817_RIT_OFF       = 0x85,
+	//  FT817_RIT_OFFSET    = 0xF5,
+	FT817_TOGGLE_VFO = 0x81,
+	FT817_SPLIT_ON = 0x02,
+	FT817_SPLIT_OFF = 0x82,
+	//  FT817_READ_RX_STATE = 0xE7,
+	FT817_READ_TX_STATE = 0xF7,
+	FT817_GET_FREQ = 0x03,
+	//  FT817_PWR_ON        = 0x0F,
+	//  FT817_PWR_OFF       = 0x8F,
 } FT817_COMMAND;
 
-typedef enum
-{
-  FT817_LSB = 0x00,
-  FT817_USB = 0x01,
-  FT817_CW  = 0x02,  //CW-U
-  FT817_CWR = 0x03,  //CW-L
-  FT817_AM  = 0x04,
-  FT817_FM  = 0x08,
-  FT817_DIG = 0x0A,
-  FT817_PKT = 0x0C
+typedef enum {
+	FT817_LSB = 0x00,
+	FT817_USB = 0x01,
+	FT817_CW = 0x02,  //CW-U
+	FT817_CWR = 0x03,  //CW-L
+	FT817_AM = 0x04,
+	FT817_FM = 0x08,
+	FT817_DIG = 0x0A,
+	FT817_PKT = 0x0C
 } FT817_MODE;
 
 /* Private define ------------------------------------------------------------*/
@@ -92,9 +89,9 @@ extern TRX_TypeDef trx;
   *
   */
 
-static inline void cat_send_reply (uint8_t *Reply, uint8_t Len)
+static inline void cat_send_reply(uint8_t* Reply, uint8_t Len)
 {
-  CDC_Transmit_FS (Reply, Len);
+	CDC_Transmit_FS(Reply, Len);
 }
 
 /**
@@ -104,9 +101,9 @@ static inline void cat_send_reply (uint8_t *Reply, uint8_t Len)
   *
   */
 
-static inline uint32_t cat_get_time (void)
+static inline uint32_t cat_get_time(void)
 {
-  return (trx.sysclock);
+	return (trx.sysclock);
 }
 
 /**
@@ -118,9 +115,9 @@ static inline uint32_t cat_get_time (void)
   *
   */
 
-static inline uint32_t cat_get_freq_bcd (void)
+static inline uint32_t cat_get_freq_bcd(void)
 {
-  return VFO_Get_Tune_BCD ();
+	return VFO_Get_Tune_BCD();
 }
 
 /**
@@ -130,9 +127,9 @@ static inline uint32_t cat_get_freq_bcd (void)
   *
   */
 
-static inline FT817_MODE cat_get_mode (void)
+static inline FT817_MODE cat_get_mode(void)
 {
-  return (FT817_MODE) (trx.mode);
+	return (FT817_MODE)(trx.mode);
 }
 
 /**
@@ -144,9 +141,9 @@ static inline FT817_MODE cat_get_mode (void)
   *
   */
 
-static inline void cat_set_freq (uint32_t freq)
+static inline void cat_set_freq(uint32_t freq)
 {
-  VFO_Set_Tune (freq);
+	VFO_Set_Tune(freq);
 }
 
 /**
@@ -156,10 +153,10 @@ static inline void cat_set_freq (uint32_t freq)
   *
   */
 
-static inline uint8_t cat_set_mode (uint8_t mode)
+static inline uint8_t cat_set_mode(uint8_t mode)
 {
-  PTT_Set_Mode (mode);
-  return 0x00;
+	PTT_Set_Mode(mode);
+	return 0;
 }
 
 /**
@@ -172,10 +169,10 @@ static inline uint8_t cat_set_mode (uint8_t mode)
   *
   */
 
-static inline uint8_t cat_split (uint8_t split)
+static inline uint8_t cat_split(uint8_t split)
 {
-  VFO_Set_Split (split);
-  return 0x00;
+	VFO_Set_Split(split);
+	return 0;
 }
 
 /**
@@ -185,10 +182,10 @@ static inline uint8_t cat_split (uint8_t split)
   *
   */
 
-static inline uint8_t cat_toggle_vfo (void)
+static inline uint8_t cat_toggle_vfo(void)
 {
-  VFO_Toggle_VFO ();
-  return 0x00;
+	VFO_Toggle_VFO();
+	return 0;
 }
 
 /**
@@ -204,17 +201,16 @@ static inline uint8_t cat_toggle_vfo (void)
   *
   */
 
-uint8_t cat_ptt (uint8_t ptt)
+uint8_t cat_ptt(uint8_t ptt)
 {
-  uint8_t retval = 0x00;
+	uint8_t retval = 0x00;
 
-  if (ptt == trx.is_tx)
-  {
-    retval = 0xF0;
-  }
-  PTT_CAT_TX (ptt);
+	if (ptt == trx.is_tx)
+		retval = 0xF0;
 
-  return retval;
+	PTT_CAT_TX(ptt);
+
+	return retval;
 }
 
 /**
@@ -224,21 +220,17 @@ uint8_t cat_ptt (uint8_t ptt)
   *
   */
 
-uint8_t cat_tx_state (void)
+uint8_t cat_tx_state(void)
 {
-  uint8_t retval = 0xFF;
+	uint8_t retval = 0xFF;
 
-  if (trx.is_tx)
-  {
-    retval &= 0x7F;
-  }
+	if (trx.is_tx)
+		retval &= 0x7F;
 
-  if (trx.split)
-  {
-    retval &= 0xDF;
-  }
+	if (trx.split)
+		retval &= 0xDF;
 
-  return retval;
+	return retval;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -251,11 +243,11 @@ uint8_t cat_tx_state (void)
   *
   */
 
-void cat_buff_init (void)
+void cat_buff_init(void)
 {
-  cat.rd_ptr = 0U;
-  cat.wr_ptr = 0U;
-  cat.buff_wr_time = cat_get_time ();
+	cat.rd_ptr = 0;
+	cat.wr_ptr = 0;
+	cat.buff_wr_time = cat_get_time();
 }
 
 /**
@@ -270,41 +262,36 @@ void cat_buff_init (void)
   * @retval 1 - OK
   */
 
-uint8_t cat_buff_read_data (uint8_t *Dest, uint8_t Len)
+uint8_t cat_buff_read_data(uint8_t* Dest, uint8_t Len)
 {
-  uint8_t i;
-  uint8_t room = 0U;
-  uint8_t retval = 0U;
+	uint8_t i;
+	uint8_t room = 0;
+	uint8_t retval = 0;
 
-  if (cat.wr_ptr >= cat.rd_ptr)
-  {
-    room = cat.wr_ptr - cat.rd_ptr;
-  }
-  else
-  {
-    room = CAT_BUFF_SIZE - cat.rd_ptr;
-    room = room + cat.wr_ptr;
-  }
+	if (cat.wr_ptr >= cat.rd_ptr)
+	{
+		room = cat.wr_ptr - cat.rd_ptr;
+	}
+	else
+	{
+		room = CAT_BUFF_SIZE - cat.rd_ptr;
+		room = room + cat.wr_ptr;
+	}
 
-  if (Len <= room)
-  {
-    for (i = 0; i < Len; i++)
-    {
-      Dest[i] = cat.buff[cat.rd_ptr];
+	if (Len <= room)
+	{
+		for (i = 0; i < Len; i++)
+		{
+			Dest[i] = cat.buff[cat.rd_ptr];
 
-      if ((cat.rd_ptr + 1U) == CAT_BUFF_SIZE)
-      {
-        cat.rd_ptr = 0U;
-      }
-      else
-      {
-        cat.rd_ptr++;
-      }
-    }
-
-    retval = 1U;
-  }
-  return retval;
+			if ((cat.rd_ptr + 1) == CAT_BUFF_SIZE)
+				cat.rd_ptr = 0;
+			else
+				cat.rd_ptr++;
+		}
+		retval = 1;
+	}
+	return retval;
 }
 
 /**
@@ -349,89 +336,89 @@ uint8_t cat_buff_read_data (uint8_t *Dest, uint8_t Len)
   *
   */
 
-void cat_ft817_handle_command (void)
+void cat_ft817_handle_command(void)
 {
-  uint8_t  req [5];
-  uint8_t  reply [6];
-  uint16_t len = 0U;
+	uint8_t  req[5];
+	uint8_t  reply[6];
+	uint16_t len = 0;
 
-  uint8_t  i;
+	uint8_t  i;
 
-  uint32_t fhex = 0U;  /* Frequency HEX value */
-  uint32_t fbcd = 0U;  /* Frequency BCD value */
+	uint32_t fhex = 0;  /* Frequency HEX value */
+	uint32_t fbcd = 0;  /* Frequency BCD value */
 
 
-  while (cat_buff_read_data (req, 5U))
-  {
-    switch ((FT817_COMMAND) req [4])
-    {
-      case FT817_SET_FREQ:
-        /* Convert CAT format to HEX */
-        for (i = 0; i < 4; i++)
-        {
-          fhex *= 100U;
-          fhex += (req [i] >> 4U) * 10U + (req [i] & 0x0F);
-        }
-        fhex *= 10U;
+	while (cat_buff_read_data(req, 5))
+	{
+		switch ((FT817_COMMAND)req[4])
+		{
+		case FT817_SET_FREQ:
+			/* Convert CAT format to HEX */
+			for (i = 0; i < 4; i++)
+			{
+				fhex *= 100;
+				fhex += (req[i] >> 4) * 10 + (req[i] & 0x0F);
+			}
+			fhex *= 10;
 
-        cat_set_freq (fhex);  /* save frequency in HEX format to TRX */
+			cat_set_freq(fhex);  /* save frequency in HEX format to TRX */
 
-        reply [0] = 0U;
-        len = 1U;
-        break;
+			reply[0] = 0;
+			len = 1;
+			break;
 
-      case FT817_GET_FREQ:
-        /* Get frequency in CAT format from TRX */
-        fbcd = cat_get_freq_bcd ();
+		case FT817_GET_FREQ:
+			/* Get frequency in CAT format from TRX */
+			fbcd = cat_get_freq_bcd();
 
-        for (i = 0; i < 3; i++)
-        {
-          reply [i] = fbcd & 0xFF;
-          fbcd = fbcd >> 8U;
-        }
-        reply [3] = fbcd & 0xFF;
+			for (i = 0; i < 3; i++)
+			{
+				reply[i] = fbcd & 0xFF;
+				fbcd = fbcd >> 8;
+			}
+			reply[3] = fbcd & 0xFF;
 
-        reply [4] = cat_get_mode ();
-        len = 5U;
-        break;
+			reply[4] = cat_get_mode();
+			len = 5U;
+			break;
 
-      case FT817_MODE_SET:
-        reply [0] = cat_set_mode (req [0]);
-        len = 1U;
-        break;
+		case FT817_MODE_SET:
+			reply[0] = cat_set_mode(req[0]);
+			len = 1;
+			break;
 
-      case FT817_TOGGLE_VFO:
-        reply [0] = cat_toggle_vfo ();
-        len = 1U;
-        break;
+		case FT817_TOGGLE_VFO:
+			reply[0] = cat_toggle_vfo();
+			len = 1;
+			break;
 
-      case FT817_SPLIT_ON:
-        reply [0] = cat_split (1U);
-        len = 1U;
-        break;
+		case FT817_SPLIT_ON:
+			reply[0] = cat_split(1);
+			len = 1;
+			break;
 
-      case FT817_SPLIT_OFF:
-        reply [0] = cat_split (0U);
-        len = 1U;
-        break;
+		case FT817_SPLIT_OFF:
+			reply[0] = cat_split(0);
+			len = 1;
+			break;
 
-      case FT817_PTT_ON:
-        reply [0] = cat_ptt (1U);
-        len = 1U;
-        break;
+		case FT817_PTT_ON:
+			reply[0] = cat_ptt(1);
+			len = 1;
+			break;
 
-      case FT817_PTT_OFF:
-        reply [0] = cat_ptt (0U);
-        len = 1U;
-        break;
+		case FT817_PTT_OFF:
+			reply[0] = cat_ptt(0);
+			len = 1;
+			break;
 
-      case FT817_READ_TX_STATE:
-        reply [0] = cat_tx_state ();
-        len = 1U;
-        break;
-    }
-    cat_send_reply (reply, len);
-  }
+		case FT817_READ_TX_STATE:
+			reply[0] = cat_tx_state();
+			len = 1;
+			break;
+		}
+		cat_send_reply(reply, len);
+	}
 }
 
 /* Public functions ----------------------------------------------------------*/
@@ -445,25 +432,25 @@ void cat_ft817_handle_command (void)
   *
   */
 
-void CAT_Buff_Write_Byte (uint8_t Byte)
+void CAT_Buff_Write_Byte(uint8_t Byte)
 {
-  uint16_t wr_ptr;
+	uint16_t wr_ptr;
 
-  if ((cat.wr_ptr + 1U) == CAT_BUFF_SIZE)
-  {
-    wr_ptr = 0U;
-  }
-  else
-  {
-    wr_ptr = cat.wr_ptr + 1U;
-  }
+	if ((cat.wr_ptr + 1) == CAT_BUFF_SIZE)
+	{
+		wr_ptr = 0;
+	}
+	else
+	{
+		wr_ptr = cat.wr_ptr + 1;
+	}
 
-  if (wr_ptr != cat.rd_ptr) /* there is enough room */
-  {
-    cat.buff [cat.wr_ptr] = Byte;
-    cat.wr_ptr = wr_ptr;
-    cat.buff_wr_time = cat_get_time ();
-  }
+	if (wr_ptr != cat.rd_ptr) /* there is enough room */
+	{
+		cat.buff[cat.wr_ptr] = Byte;
+		cat.wr_ptr = wr_ptr;
+		cat.buff_wr_time = cat_get_time();
+	}
 }
 
 /**
@@ -471,31 +458,31 @@ void CAT_Buff_Write_Byte (uint8_t Byte)
   *
   */
 
-void CAT_Handler (uint8_t connected)
+void CAT_Handler(uint8_t connected)
 {
-  if (connected)
-  {
-    if (cat.is_connected)
-    {
-      if ((cat_get_time () - cat.buff_wr_time) < CAT_TIMEOUT)
-      {
-        cat_ft817_handle_command ();
-      }
-      else
-      {
-        cat_buff_init ();
-      }
-    }
-    else
-    {
-      cat_buff_init ();
-      cat.is_connected = 1U;
-    }
-  }
-  else
-  {
-    cat.is_connected = 0U;
-  }
+	if (connected)
+	{
+		if (cat.is_connected)
+		{
+			if ((cat_get_time() - cat.buff_wr_time) < CAT_TIMEOUT)
+			{
+				cat_ft817_handle_command();
+			}
+			else
+			{
+				cat_buff_init();
+			}
+		}
+		else
+		{
+			cat_buff_init();
+			cat.is_connected = 1;
+		}
+	}
+	else
+	{
+		cat.is_connected = 0;
+	}
 }
 
 

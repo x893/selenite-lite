@@ -48,7 +48,6 @@ typedef struct
 /* Exported functions prototypes ---------------------------------------------*/
 
 void PTT_Key_Off_Time (void);
-void PTT_Set_HSE (void);
 void PTT_Init (void);
 void PTT_Set_Mode (uint8_t);
 void PTT_CAT_TX (uint8_t);
@@ -60,8 +59,6 @@ void VFO_Set_Tune (uint32_t);
 void VFO_Set_Split (uint8_t);
 uint32_t VFO_Get_Tune (void);
 uint32_t VFO_Get_Tune_BCD (void);
-uint32_t HEX_to_BCD (uint32_t);
-uint32_t BCD_to_CAT (uint32_t);
 
 /* Private defines -----------------------------------------------------------*/
 

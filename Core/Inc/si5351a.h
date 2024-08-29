@@ -30,7 +30,7 @@ extern "C" {
 /* Exported functions prototypes ---------------------------------------------*/
 
 void Si5351a_Init (void);
-void Si5351a_Set_Freq (uint32_t, uint16_t, uint16_t);
+void Si5351a_Set_Freq (uint32_t freq);
 
 /* Private defines -----------------------------------------------------------*/
 
