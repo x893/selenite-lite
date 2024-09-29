@@ -1,4 +1,4 @@
-
+﻿
 /**
   *******************************************************************************
   *
@@ -38,7 +38,7 @@ extern "C" {
 
 /* Exported functions prototypes ---------------------------------------------*/
 
-void Codec_Init (void);
+void Codec_Init (uint32_t);
 void Codec_Set_RX (void);
 void Codec_Set_TX (void);
 uint8_t Codec_AF_Vol (uint8_t);
@@ -50,10 +50,6 @@ uint8_t Codec_AF_Vol (uint8_t);
 #endif /* CODEC_I2C_PORT */
 
 extern I2C_HandleTypeDef CODEC_I2C_PORT;
-
-#ifndef CODEC_I2C_TIMEOUT
-#define CODEC_I2C_TIMEOUT          10
-#endif /* CODEC_I2C_TIMEOUT */
 
 #ifndef CODEC_BUS_BASE_ADDR
 #define CODEC_BUS_BASE_ADDR        0x18

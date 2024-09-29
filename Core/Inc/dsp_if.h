@@ -28,7 +28,6 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 
 #include "main.h"
-#include "usbd_audio.h"
 #include "stm32f4xx_hal.h"
 
 /* Exported types ------------------------------------------------------------*/
@@ -44,6 +43,8 @@ void DSP_Out_Buff_Mute  (void);
 void DSP_In_Buff_Read   (uint8_t*,  uint32_t);
 void DSP_Init (void);
 
+void DSP_Set_RX (void);
+void DSP_Set_TX (void);
 void DSP_Set_Mode (uint8_t);
 void DSP_Out_Buff_Read (uint16_t*, uint16_t);
 void DSP_In_Buff_Write (uint16_t*, uint16_t);

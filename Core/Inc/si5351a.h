@@ -1,4 +1,4 @@
-/**
+﻿/**
   *******************************************************************************
   *
   * @file    si5351a.h
@@ -30,7 +30,7 @@ extern "C" {
 /* Exported functions prototypes ---------------------------------------------*/
 
 void Si5351a_Init (void);
-void Si5351a_Set_Freq (uint32_t freq);
+void Si5351a_Set_Freq (uint32_t, uint16_t, uint16_t);
 
 /* Private defines -----------------------------------------------------------*/
 
@@ -39,10 +39,6 @@ void Si5351a_Set_Freq (uint32_t freq);
 #ifndef SI5351_I2C_PORT
 #define SI5351_I2C_PORT           hi2c3
 #endif /* SI5351_I2C_PORT */
-
-#ifndef SI5351_I2C_TIMEOUT
-#define SI5351_I2C_TIMEOUT        10
-#endif /* SI5351_I2C_TIMEOUT */
 
 #ifndef SI5351_BUS_BASE_ADDR
 #define SI5351_BUS_BASE_ADDR      0x60

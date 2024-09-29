@@ -37,33 +37,6 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
-typedef enum
-{
-	MODE_LSB = 0x00,
-	MODE_USB = 0x01,
-	MODE_CW  = 0x02,  //CW-USB
-	MODE_CWR = 0x03,  //CW-LSB
-	MODE_AM  = 0x04,
-	MODE_FM  = 0x08,
-	MODE_DIG = 0x0A,  //DIG-U
-	MODE_PKT = 0x0C   //DIG-L
-} Mode;
-
-typedef struct
-{
-	Mode     mode;
-	uint32_t vfoa_bcd;
-	uint32_t vfob_bcd;
-	uint32_t vfoa;
-	uint32_t vfob;
-	uint32_t displayed;
-	uint32_t sysclock;
-	uint8_t  vfo;
-	uint8_t  split;
-	uint8_t  is_tx;
-	uint8_t  systicks;
-} TRX_TypeDef;
-
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -102,16 +75,24 @@ void Error_Handler(void);
 #define ILI9341_RES_GPIO_Port GPIOB
 #define ILI9341_LED_Pin GPIO_PIN_10
 #define ILI9341_LED_GPIO_Port GPIOB
+#define I2C3_SCL_Pin GPIO_PIN_8
+#define I2C3_SCL_GPIO_Port GPIOA
 #define KEY_DAH_Pin GPIO_PIN_9
 #define KEY_DAH_GPIO_Port GPIOA
 #define KEY_DAH_EXTI_IRQn EXTI9_5_IRQn
 #define KEY_DIT_Pin GPIO_PIN_10
 #define KEY_DIT_GPIO_Port GPIOA
 #define KEY_DIT_EXTI_IRQn EXTI15_10_IRQn
+#define I2C3_SDA_Pin GPIO_PIN_4
+#define I2C3_SDA_GPIO_Port GPIOB
 #define I2S2_RES_Pin GPIO_PIN_5
 #define I2S2_RES_GPIO_Port GPIOB
 #define TX_Pin GPIO_PIN_6
 #define TX_GPIO_Port GPIOB
+#define I2C1_SCL_Pin GPIO_PIN_8
+#define I2C1_SCL_GPIO_Port GPIOB
+#define I2C1_SDA_Pin GPIO_PIN_9
+#define I2C1_SDA_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

@@ -1,14 +1,14 @@
-/**
+﻿/**
   *******************************************************************************
   *
   * @file    codec_if.c
   * @brief   Codec interface
-  * @version v2.1
-  * @date    28.10.2022
+  * @version v2.2
+  * @date    23.09.2024
   * @author  Dmitrii Rudnev
   *
   *******************************************************************************
-  * Copyrigh &copy; 2022 Selenite Project. All rights reserved.
+  * Copyrigh &copy; 2024 Selenite Project. All rights reserved.
   *
   * This software component is licensed under [BSD 3-Clause license]
   * (http://opensource.org/licenses/BSD-3-Clause/), the "License".<br>
@@ -16,7 +16,18 @@
   *******************************************************************************
   */
 
+
+/* Includes ------------------------------------------------------------------*/
 #include "codec_if.h"
+#include "i2c_if.h"
+
+/* Private typedef -----------------------------------------------------------*/
+
+/* Private define ------------------------------------------------------------*/
+
+/* Private macro -------------------------------------------------------------*/
+
+/* Private variables ---------------------------------------------------------*/
 
 const Output_Level output_level[21] =
 {
@@ -28,83 +39,33 @@ const Output_Level output_level[21] =
 	{99,  0}                                //  0.0 dB
 };
 
-/**
- * @brief This function checks if the I2C device is ready
- *
- */
-static uint8_t codec_i2c_is_not_ready(void)
-{
-	if (HAL_I2C_IsDeviceReady(&CODEC_I2C_PORT,
-		(uint16_t)CODEC_BUS_BASE_ADDR << 1,
-		2, CODEC_I2C_TIMEOUT) != HAL_OK)
-	{
-		Error_Handler();
-		return 1U;
-	}
-	return 0U;
-}
+/* Private function prototypes -----------------------------------------------*/
 
-/**
- * @brief This function checks for I2C transmission errors
- *
- */
+/* Private user code ---------------------------------------------------------*/
 
-static void codec_i2c_get_error(void)
-{
-	if (HAL_I2C_GetError(&CODEC_I2C_PORT) != HAL_I2C_ERROR_AF)
-	{
-		Error_Handler();
-	}
-}
+/* External variables --------------------------------------------------------*/
 
+/* Private functions ---------------------------------------------------------*/
 
 /**
  * @brief This function writes to a codec register
  *
  */
 
-static void codec_write_reg(uint8_t addr, uint8_t data)
+void codec_write_reg (uint8_t addr, uint8_t data)
 {
-	if (codec_i2c_is_not_ready()) return;
-
-	uint8_t d[2] = { addr, data };
-
-	if (HAL_I2C_Master_Transmit(&CODEC_I2C_PORT,
-		(uint16_t)CODEC_BUS_BASE_ADDR << 1,
-		(uint8_t*)d, 2, CODEC_I2C_TIMEOUT) != HAL_OK)
-	{
-		codec_i2c_get_error();
+  I2C_Transmit (&CODEC_I2C_PORT, (uint16_t)CODEC_BUS_BASE_ADDR, addr, data);
 	}
-}
-
 
 /**
  * @brief This function reads from a codec register
  *
  */
 
-static void codec_read_reg(uint8_t addr, uint8_t* data)
+void codec_read_reg (uint8_t addr, uint8_t *data)
 {
-	if (codec_i2c_is_not_ready()) return;
-
 	addr -= 1U;
-
-	if (HAL_I2C_Master_Transmit(&CODEC_I2C_PORT,
-		(uint16_t)CODEC_BUS_BASE_ADDR << 1,
-		(uint8_t*)&addr, 1, CODEC_I2C_TIMEOUT) != HAL_OK)
-	{
-		codec_i2c_get_error();
-		return;
-	}
-
-	if (codec_i2c_is_not_ready()) return;
-
-	if (HAL_I2C_Master_Receive(&CODEC_I2C_PORT,
-		(uint16_t)CODEC_BUS_BASE_ADDR << 1,
-		data, 1, CODEC_I2C_TIMEOUT) != HAL_OK)
-	{
-		codec_i2c_get_error();
-	}
+  I2C_Receive (&CODEC_I2C_PORT, (uint16_t)CODEC_BUS_BASE_ADDR, addr, data);
 }
 
 /**
@@ -112,7 +73,7 @@ static void codec_read_reg(uint8_t addr, uint8_t* data)
  *
  */
 
-static void codec_bit_set(uint8_t addr, uint8_t bit)
+void codec_bit_set (uint8_t addr, uint8_t bit)
 {
 	uint8_t data = 0;
 
@@ -129,7 +90,7 @@ static void codec_bit_set(uint8_t addr, uint8_t bit)
  *
  */
 
-static void codec_bit_reset(uint8_t addr, uint8_t bit)
+void codec_bit_reset (uint8_t addr, uint8_t bit)
 {
 	uint8_t data = 0;
 
@@ -146,7 +107,7 @@ static void codec_bit_reset(uint8_t addr, uint8_t bit)
  *
  */
 
-static void codec_mute_all(void)
+void codec_mute_all (void)
 {
 	codec_bit_reset(86, 3); /* Reset D3 of Register 86 to mute LEFT_LOP/M  */
 	codec_bit_reset(93, 3); /* Reset D3 of Register 93 to mute RIGHT_LOP/M */
@@ -170,7 +131,7 @@ static void codec_mute_all(void)
  *
  */
 
-static void codec_set_gain(uint8_t addr, uint8_t gain)
+void codec_set_gain (uint8_t addr, uint8_t gain)
 {
 	/* Used to set:
 	 * PGA gain 0...+59.5 dB (registers 15, 16)
@@ -197,10 +158,9 @@ static void codec_set_gain(uint8_t addr, uint8_t gain)
  *
  */
 
-static void codec_set_in_level(uint8_t addr, uint8_t level)
+void codec_set_in_level (uint8_t addr, uint8_t level)
 {
-	/*
-	* Bits D6...D3 of control registers 19...24 set the input level in dB:
+  /* Bits D6...D3 of control registers 19...24 set the input level in dB:
 	* 0000 =  0.0; 0001 =  -1.5; 0010 =  -3.0;
 	* 0011 = -4.5; 0100 =  -6.0; 0101 =  -7.5;
 	* 0110 = -9.0; 0111 = -10.5; 1000 = -12.0;
@@ -213,10 +173,12 @@ static void codec_set_in_level(uint8_t addr, uint8_t level)
 
 	uint8_t data = 0;
 
-	if (addr < 17 || addr > 24)
-		return;
-	if (level < 0x0F && level > 0x08)
-		level = 0x08;
+  if (addr < 17) { return; }
+  if (addr > 24) { return; }
+  if (level < 0x0F)
+  {
+    if (level > 0x08) { level = 0x08; }
+  }
 
 	codec_read_reg(addr, &data);
 
@@ -240,10 +202,9 @@ static void codec_set_in_level(uint8_t addr, uint8_t level)
  *
  */
 
-static void codec_set_out_level(uint8_t addr, uint8_t level)
+void codec_set_out_level (uint8_t addr, uint8_t level)
 {
-	/*
-	* Bits D7...D4 of control registers 51, 58, 65, 72, 86, 93
+  /* Bits D7...D4 of control registers 51, 58, 65, 72, 86, 93
 	* set the output level in dB:
 	* 0000 = 0; 0001 = 1; 0010 = 2; 0011 = 3; 0100 = 4;
 	* 0101 = 5; 0110 = 6; 0111 = 7; 1000 = 8; 1001 = 9;
@@ -252,8 +213,7 @@ static void codec_set_out_level(uint8_t addr, uint8_t level)
 
 	uint8_t data = 0;
 
-	if (level > 0x09)
-		level = 0x09;
+  if (level > 0x09) { level = 0x09; }
 
 	codec_read_reg(addr, &data);
 
@@ -262,13 +222,12 @@ static void codec_set_out_level(uint8_t addr, uint8_t level)
 	codec_write_reg(addr, data);
 }
 
-/* Public functions ----------------------------------------------------------*/
-
 /**
  * @brief This function sets codec to RX mode
  *
  */
-void Codec_Set_RX(void)
+
+void codec_set_rx (void)
 {
 	/* Mute all channels */
 	codec_mute_all();
@@ -330,7 +289,7 @@ void Codec_Set_RX(void)
  *
  */
 
-void Codec_Set_TX(void)
+void codec_set_tx (void)
 {
 	/* Mute all channels */
 	codec_mute_all();
@@ -382,11 +341,11 @@ void Codec_Set_TX(void)
 }
 
 /**
- * @brief This function sets codec mode and starts I2S buffer
+ * @brief This function initializes codec
  *
- * @param none
  */
-void Codec_Init( )
+
+void codec_init (uint32_t sr)
 {
 	HAL_GPIO_WritePin(I2S2_RES_GPIO_Port, I2S2_RES_Pin, GPIO_PIN_RESET);
 	HAL_Delay(100);
@@ -398,20 +357,16 @@ void Codec_Init( )
 	/* Codec uses MCLK */
 	/* Write 1 to Register 101 for CODEC_CLKIN uses CLKDIV_OUT */
 	codec_write_reg(101, 0x01);
-
-	/*
-	* Write 0x02 to Register 102 for CLKDIV_IN uses MCLK (default)
+  /* Write 0x02 to Register 102 for CLKDIV_IN uses MCLK (default)
 	* If MCLK = 12288 kHz write 0x10 to Register 3 to divide CODEC_CLKIN by 1 (Q = 2)(default)
-	* If MCLK = 24576 kHz write 0x20 to Register 3 to divide CODEC_CLKIN by 2 (Q = 4)
-	*/
+   * If MCLK = 24576 kHz write 0x20 to Register 3 to divide CODEC_CLKIN by 2 (Q = 4) */
 
 	/* Write 0x0A to Register 7 to route Left data to Left DAC, Route Right data to Right DAC (48 kHz)
-	* Write 0x6A to Register 7 to the same routing with ADC, DAC dual-rate mode (96 kHz)
-	*/
+   * Write 0x6A to Register 7 to the same routing with ADC, DAC dual-rate mode (96 kHz) */
 
 	codec_write_reg(102, 0x02);
 
-	/*
+
 	if (sr == 96000U)
 	{
 		codec_write_reg (3, 0x20);
@@ -422,18 +377,13 @@ void Codec_Init( )
 		codec_write_reg (3, 0x10);
 		codec_write_reg (7, 0x0A);
 	}
-	*/
 
-	codec_write_reg(3, 0x20);
-	codec_write_reg(7, 0x6A);
 
 	/* Set D7 of Register 14 to set HP outputs for ac-coupled driver configuration */
 	codec_bit_set(14, 7);
-	/*
-	* Set D5, reset D4 of Register 37 to configure HPLCOM as independent SE output
+  /* Set D5, reset D4 of Register 37 to configure HPLCOM as independent SE output
 	* Set D6 of Register 37 to power up Right DAC
-	* Set D7 of Register 37 to power up Left DAC
-	*/
+   * Set D7 of Register 37 to power up Left DAC */
 	codec_write_reg(37, 0xE0);
 	/* Set D4, reset D5, D3 of Register 38 to configure HPRCOM as independent SE output */
 	codec_write_reg(38, 0x10);
@@ -466,16 +416,47 @@ void Codec_Init( )
 	codec_set_out_level(86, 0); /* Set LEFT_LOP/M  output level = 0dB */
 	codec_set_out_level(93, 0); /* Set RIGHT_LOP/M output level = 0dB */
 
-	/*
-	* Write data to Register 25 to set MICBIAS voltage
+  /* Write data to Register 25 to set MICBIAS voltage
 	* data = 0x00 is powered down
 	* data = 0x40 is powered to 2V
 	* data = 0x80 is powered to 2.5V
-	* data = 0xC0 is powered to AVDD
-	*/
-	codec_write_reg(25, 0x40);
+   * data = 0xC0 is powered to AVDD */
+  codec_write_reg (25, 0x40);
 
-	Codec_Set_RX();
+  codec_set_rx ( );
+}
+
+/* Public functions ----------------------------------------------------------*/
+
+/**
+ * @brief This function sets codec to RX mode
+ *
+ */
+
+void Codec_Set_RX (void)
+{
+  codec_set_rx ( );
+}
+
+/**
+ * @brief This function sets codec to TX mode
+ *
+ */
+
+void Codec_Set_TX (void)
+{
+  codec_set_tx ( );
+}
+
+/**
+ * @brief This function sets codec mode and starts I2S buffer
+ *
+ * @param none
+	*/
+
+void Codec_Init (uint32_t sr)
+{
+  codec_init (sr);
 }
 
 
