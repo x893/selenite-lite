@@ -25,7 +25,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 
-uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
+void CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
 
 #define CAT_BUFF_SIZE 16U
 
