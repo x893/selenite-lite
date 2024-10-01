@@ -45,7 +45,7 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 MEMORY
 {
   RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 128K
-  FLASH    (rx)    : ORIGIN = 0x8008000,   LENGTH = (512K-32K)
+  FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 512K
 }
 
 /* Sections */
@@ -178,9 +178,11 @@ SECTIONS
   /* Remove information from the compiler libraries */
   /DISCARD/ :
   {
+  /*
     libc.a ( * )
     libm.a ( * )
     libgcc.a ( * )
+    */
   }
 
   .ARM.attributes 0 : { *(.ARM.attributes) }

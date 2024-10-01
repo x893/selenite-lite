@@ -1,4 +1,4 @@
-﻿#include "bsp/board_api.h"
+#include "bsp/board_api.h"
 #include "tusb.h"
 #include "rxtx_if.h"
 

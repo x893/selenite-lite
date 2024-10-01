@@ -31,24 +31,24 @@ void CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
 
 typedef struct
 {
-  uint8_t  buff [CAT_BUFF_SIZE];
-  uint16_t wr_ptr;
-  uint16_t rd_ptr;
-  uint8_t  get_freq [5U];
-  uint8_t  read_tx_state;
+	uint16_t wr_ptr;
+	uint16_t rd_ptr;
+	uint8_t  read_tx_state;
+	uint8_t  get_freq [5U];
+	uint8_t  buff [CAT_BUFF_SIZE];
 } CAT_TypeDef;
 
 typedef enum
 {
-  FT817_SET_FREQ      = 0x01,
-  FT817_TOGGLE_VFO    = 0x81,
-  FT817_SPLIT_ON      = 0x02,
-  FT817_SPLIT_OFF     = 0x82,
-  FT817_GET_FREQ      = 0x03,
-  FT817_MODE_SET      = 0x07,
-  FT817_PTT_ON        = 0x08,
-  FT817_PTT_OFF       = 0x88,
-  FT817_READ_TX_STATE = 0xF7,
+	FT817_SET_FREQ      = 0x01,
+	FT817_TOGGLE_VFO    = 0x81,
+	FT817_SPLIT_ON      = 0x02,
+	FT817_SPLIT_OFF     = 0x82,
+	FT817_GET_FREQ      = 0x03,
+	FT817_MODE_SET      = 0x07,
+	FT817_PTT_ON        = 0x08,
+	FT817_PTT_OFF       = 0x88,
+	FT817_READ_TX_STATE = 0xF7,
 } FT817_COMMAND;
 
 /* Private define ------------------------------------------------------------*/
@@ -501,71 +501,71 @@ void vfo_set_tune_cat (void)
 
 void cat_cmd_handler (void)
 {
-  uint8_t cmd, reply;
+	uint8_t cmd, reply;
 
-  do
-  {
-    cmd   = cat.buff [cat.rd_ptr + 4];
+	do
+	{
+		cmd   = cat.buff [cat.rd_ptr + 4];
 
-    if (cmd == FT817_GET_FREQ)
-    {
-      CDC_Transmit_FS (cat.get_freq, 5U);
-    }
-    else
-    {
-      reply = 0U;
+		if (cmd == FT817_GET_FREQ)
+		{
+			CDC_Transmit_FS (cat.get_freq, 5U);
+		}
+		else
+		{
+			reply = 0U;
 
-      switch (cmd)
-      {
-        case FT817_READ_TX_STATE:
-          reply = cat.read_tx_state;
-          break;
+			switch (cmd)
+			{
+			case FT817_READ_TX_STATE:
+				reply = cat.read_tx_state;
+				break;
 
-        case FT817_SET_FREQ:
-          *(uint32_t*)cat.get_freq = *(uint32_t*)&cat.buff [cat.rd_ptr];
-          vfo_set_tune_cat ();
-          break;
+			case FT817_SET_FREQ:
+				*(uint32_t*)cat.get_freq = *(uint32_t*)&cat.buff [cat.rd_ptr];
+				vfo_set_tune_cat ();
+				break;
 
-        case FT817_MODE_SET:
-          cat.get_freq [4] = cat.buff [cat.rd_ptr];
-          PTT_Set_Mode (cat.buff [cat.rd_ptr]);
-          break;
+			case FT817_MODE_SET:
+				cat.get_freq [4] = cat.buff [cat.rd_ptr];
+				PTT_Set_Mode (cat.buff [cat.rd_ptr]);
+				break;
 
-        case FT817_TOGGLE_VFO:
-          VFO_Toggle_VFO ();
-          break;
+			case FT817_TOGGLE_VFO:
+				VFO_Toggle_VFO ();
+				break;
 
-        case FT817_SPLIT_ON:
-          VFO_Set_Split (1U);
-          break;
+			case FT817_SPLIT_ON:
+				VFO_Set_Split (1U);
+				break;
 
-        case FT817_SPLIT_OFF:
-          VFO_Set_Split (0U);
-          break;
+			case FT817_SPLIT_OFF:
+				VFO_Set_Split (0U);
+				break;
 
-        case FT817_PTT_ON:
-          reply = ptt_cat_tx (1U);
-          break;
+			case FT817_PTT_ON:
+				reply = ptt_cat_tx (1U);
+				break;
 
-        case FT817_PTT_OFF:
-          reply = ptt_cat_tx (0U);
-          break;
+			case FT817_PTT_OFF:
+				reply = ptt_cat_tx (0U);
+				break;
 
-        default:
-          break;
-      }
-      CDC_Transmit_FS (&reply, 1U);
-    }
+			default:
+				break;
+			}
+			CDC_Transmit_FS (&reply, 1U);
+		}
 
-    cat.rd_ptr += 5U;
+		cat.rd_ptr += 5U;
 
-    if (cat.rd_ptr >= cat.wr_ptr)
-    {
-      cat.rd_ptr = 0;
-      cat.wr_ptr = 0;
-    }
-  }
-  while (cat.wr_ptr);
+		if (cat.rd_ptr >= cat.wr_ptr)
+		{
+			cat.rd_ptr = 0;
+			cat.wr_ptr = 0;
+		}
+	}
+	while (cat.wr_ptr);
 }
 
 /**
@@ -659,28 +659,22 @@ void RXTX_Init (void)
 
 void RXTX_Handler (void)
 {
-  if (cat.wr_ptr)
-  {
-    cat_cmd_handler ();
-  }
+	if ( cat.wr_ptr >= 5)
+		cat_cmd_handler ();
 
-  if (ptt.key_off_time != 0U)
-  {
-    if ((trx.sysclock - ptt.key_off_time) > KEY_TIMEOUT)
-    {
-      ptt.key_off_time = 0U;
-      ptt_set_rx ();
-    }
-  }
+	if ( ptt.key_off_time != 0U && (trx.sysclock - ptt.key_off_time) > KEY_TIMEOUT )
+	{
+		ptt.key_off_time = 0U;
+		ptt_set_rx ();
+	}
 
-  if ((trx.sysclock - trx.displayed) > 19)
-  {
-    trx.displayed = trx.sysclock;
-    //++++++
-    /* Start here UI handler */
-    //++++++
-  }
-
+	if ((trx.sysclock - trx.displayed) > 19)
+	{
+		trx.displayed = trx.sysclock;
+		//++++++
+		/* Start here UI handler */
+		//++++++
+	}
 }
 
 /**

@@ -55,50 +55,50 @@ defined in linker script */
 */
 
     .section  .text.Reset_Handler
-  .weak  Reset_Handler
-  .type  Reset_Handler, %function
+    .weak  Reset_Handler
+    .type  Reset_Handler, %function
 Reset_Handler:  
-  ldr   sp, =_estack    		 /* set stack pointer */
+    ldr   sp, =_estack    		 /* set stack pointer */
 
 /* Call the clock system initialization function.*/
-  bl  SystemInit   
+    bl  SystemInit   
 
 /* Copy the data segment initializers from flash to SRAM */  
-  ldr r0, =_sdata
-  ldr r1, =_edata
-  ldr r2, =_sidata
-  movs r3, #0
-  b LoopCopyDataInit
+    ldr r0, =_sdata
+    ldr r1, =_edata
+    ldr r2, =_sidata
+    movs r3, #0
+    b LoopCopyDataInit
 
 CopyDataInit:
-  ldr r4, [r2, r3]
-  str r4, [r0, r3]
-  adds r3, r3, #4
+    ldr r4, [r2, r3]
+    str r4, [r0, r3]
+    adds r3, r3, #4
 
 LoopCopyDataInit:
-  adds r4, r0, r3
-  cmp r4, r1
-  bcc CopyDataInit
+    adds r4, r0, r3
+    cmp r4, r1
+    bcc CopyDataInit
   
 /* Zero fill the bss segment. */
-  ldr r2, =_sbss
-  ldr r4, =_ebss
-  movs r3, #0
-  b LoopFillZerobss
+    ldr r2, =_sbss
+    ldr r4, =_ebss
+    movs r3, #0
+    b LoopFillZerobss
 
 FillZerobss:
-  str  r3, [r2]
-  adds r2, r2, #4
+    str  r3, [r2]
+    adds r2, r2, #4
 
 LoopFillZerobss:
-  cmp r2, r4
-  bcc FillZerobss
+    cmp r2, r4
+    bcc FillZerobss
 
 /* Call static constructors */
     bl __libc_init_array
 /* Call the application's entry point.*/
-  bl  main
-  bx  lr    
+    bl  main
+    bx  lr    
 .size  Reset_Handler, .-Reset_Handler
 
 /**

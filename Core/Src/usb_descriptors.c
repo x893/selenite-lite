@@ -81,12 +81,12 @@ uint8_t const * tud_descriptor_device_cb(void)
   #define EPNUM_CDC_IN      0x85
 
 #else
-	#define EPNUM_AUDIO_IN    0x01
+	#define EPNUM_AUDIO_IN    0x81
 	#define EPNUM_AUDIO_OUT   0x01
 
-	#define EPNUM_CDC_NOTIF   0x82
-	#define EPNUM_CDC_OUT     0x03
-	#define EPNUM_CDC_IN      0x83
+	#define EPNUM_CDC_NOTIF   0x83
+	#define EPNUM_CDC_OUT     0x02
+	#define EPNUM_CDC_IN      0x82
 #endif
 
 uint8_t const desc_configuration[] =

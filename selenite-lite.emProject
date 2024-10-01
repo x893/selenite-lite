@@ -1,0 +1,123 @@
+<!DOCTYPE CrossStudio_Project_File>
+<solution Name="cdc_uac2" version="2" target="8">
+  <configuration
+    Name="Debug"
+    c_preprocessor_definitions="DEBUG"
+    gcc_debugging_level="Level 3"
+    gcc_omit_frame_pointer="Yes"
+    gcc_optimization_level="None" />
+  <configuration
+    Name="Release"
+    c_preprocessor_definitions="NDEBUG"
+    gcc_debugging_level="Level 2"
+    gcc_omit_frame_pointer="Yes"
+    gcc_optimization_level="Level 2 balanced" />
+  <project Name="selenite-lite">
+    <configuration
+      LIBRARY_IO_TYPE="RTT"
+      Name="Common"
+      Target="STM32F411CEUx"
+      arm_architecture="v7EM"
+      arm_compiler_variant="gcc"
+      arm_core_type="Cortex-M4"
+      arm_endian="Little"
+      arm_fp_abi="Hard"
+      arm_fpu_type="FPv4-SP-D16"
+      arm_linker_heap_size="1024"
+      arm_linker_process_stack_size="0"
+      arm_linker_stack_size="2048"
+      arm_linker_variant="SEGGER"
+      arm_simulator_memory_simulation_parameter="ROM;0x08000000;0x00080000;RAM;0x20000000;0x00020000"
+      arm_target_device_name="STM32F411CE"
+      arm_target_interface_type="SWD"
+      c_preprocessor_definitions="ARM_MATH_CM4;STM32F411xE;__STM32F411_SUBFAMILY;__STM32F4XX_FAMILY"
+      c_user_include_directories="$(ProjectDir)/STM32F4xx/Device/Include"
+      debug_register_definition_file="$(ProjectDir)/STM32F411_Registers.xml"
+      debug_stack_pointer_start="__stack_end__"
+      debug_start_from_entry_point_symbol="Yes"
+      debug_target_connection="J-Link"
+      gcc_entry_point="Reset_Handler"
+      link_linker_script_file="$(ProjectDir)/STM32F4xx_Flash.icf"
+      linker_memory_map_file="$(ProjectDir)/STM32F411CEUx_MemoryMap.xml"
+      macros="DeviceHeaderFile=$(PackagesDir)/STM32F4xx/Device/Include/stm32f4xx.h;DeviceSystemFile=$(PackagesDir)/STM32F4xx/Device/Source/system_stm32f4xx.c;DeviceVectorsFile=$(PackagesDir)/STM32F4xx/Source/stm32f411xe_Vectors.s;DeviceFamily=STM32F4xx;DeviceSubFamily=STM32F411;Target=STM32F411CEUx"
+      project_directory=""
+      project_type="Executable"
+      target_reset_script="Reset();" />
+    <configuration
+      LIBRARY_LOCALES="Minimal"
+      Name="Debug"
+      arm_linker_variant="GNU"
+      arm_target_interface_type="SWD"
+      build_intermediate_directory="$(Configuration)/Obj/$(ProjectName)"
+      build_output_directory="$(Configuration)/Exe"
+      c_preprocessor_definitions="STM32F411xE;CFG_TUSB_MCU=OPT_MCU_STM32F4;BOARD_TUD_RHPORT=0;NO_CFG_TUSB_DEBUG=3;NO_LOGGER_RTT;SEGGER_RTT_MODE_DEFAULT=SEGGER_RTT_MODE_NO_BLOCK_SKIP"
+      c_user_include_directories="Core/Inc;Drivers/STM32F4xx_HAL_Driver/Inc;Drivers/CMSIS/Core/Include;Drivers/CMSIS/Device/ST/STM32F4xx/Include;RTT/Config;RTT/RTT;tinyusb/hw;tinyusb/src"
+      clang_gnu_version="4.2.1"
+      debug_stack_pointer_start="_estack"
+      debug_startup_completion_point="main"
+      gcc_c_language_standard="gnu99"
+      gcc_optimization_level="Level 0"
+      link_include_standard_libraries="Yes"
+      link_linker_script_file="STM32F411CEUX_FLASH.ld"
+      link_use_linker_script_file="Yes"
+      speed="1000"
+      target_reset_script="" />
+    <folder Name="Core">
+      <file file_name="Core/Src/cdc_app.c" />
+      <file file_name="Core/Src/codec_if.c" />
+      <file file_name="Core/Src/dsp_if.c" />
+      <file file_name="Core/Src/i2c_if.c" />
+      <file file_name="Core/Src/main.c" />
+      <file file_name="Core/Src/rxtx_if.c" />
+      <file file_name="Core/Src/si5351a.c" />
+      <file file_name="Core/Startup/startup_stm32f411xe.s" />
+      <file file_name="Core/Src/stm32f4xx_hal_msp.c" />
+      <file file_name="Core/Src/stm32f4xx_it.c" />
+      <file file_name="Core/Src/syscalls.c" />
+      <file file_name="Core/Src/system_stm32f4xx.c" />
+      <file file_name="Core/Src/uac2_app.c" />
+      <file file_name="Core/Src/usb_descriptors.c" />
+    </folder>
+    <folder Name="hal">
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s_ex.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc_ex.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c" />
+      <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_adc.c" />
+    </folder>
+    <folder Name="RTT">
+      <file file_name="RTT/SEGGER_RTT.c" />
+      <file file_name="RTT/SEGGER_RTT_printf.c" />
+    </folder>
+    <folder Name="tusb">
+      <file file_name="tinyusb/src/class/audio/audio_device.c" />
+      <file file_name="tinyusb/src/class/cdc/cdc_device.c" />
+      <file file_name="tinyusb/src/portable/synopsys/dwc2/dcd_dwc2.c" />
+      <file file_name="tinyusb/src/tusb.c" />
+      <file file_name="tinyusb/src/common/tusb_fifo.c" />
+      <file file_name="tinyusb/src/device/usbd.c" />
+      <file file_name="tinyusb/src/device/usbd_control.c" />
+    </folder>
+    <file file_name="STM32F411CEUX_FLASH.ld" />
+  </project>
+</solution>

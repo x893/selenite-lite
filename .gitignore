@@ -20,3 +20,4 @@ JLinkSettings.ini
 JLinkLog.txt
 MDK-ARM/DebugConfig
 MDK-ARM/selenite-lite
+*.jdebug.user
