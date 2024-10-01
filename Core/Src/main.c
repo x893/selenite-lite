@@ -87,6 +87,26 @@ static void MX_USB_OTG_FS_PCD_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+size_t board_get_unique_id(uint8_t id[], size_t max_len)
+{
+	uint32_t deviceserial0, deviceserial1, deviceserial2;
+
+	deviceserial0 = HAL_GetUIDw0();
+	deviceserial1 = HAL_GetUIDw1();
+	deviceserial2 = HAL_GetUIDw2();
+	deviceserial0 += deviceserial2;
+
+	if (deviceserial0 != 0)
+	{
+		deviceserial0 = __REV(deviceserial0);
+		memcpy(&id[0], &deviceserial0, 4);
+		deviceserial1 = __REV(deviceserial1);
+		memcpy(&id[4], &deviceserial1, 2);
+		return 6;
+	}
+	return 0;
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -114,7 +134,7 @@ int main(void)
 	HAL_Delay(500);
 
 	/* Set HSE = 24.576 MHz from VFO */
-  VFO_Init ();
+	VFO_Init ();
 	HAL_Delay(500);
 
   /* USER CODE END Init */
@@ -145,6 +165,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	// board_init();
 	tud_init(BOARD_TUD_RHPORT);
 	while (1)
 	{

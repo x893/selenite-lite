@@ -29,10 +29,35 @@ void tud_cdc_rx_cb(uint8_t itf)
 	uint8_t buf[64];
 	uint32_t count;
 
-		if (tud_cdc_available()) // data is available
-		{
-			cdc_itf = itf;
-			count = tud_cdc_n_read(itf, buf, sizeof(buf));
-			CAT_Buff_Write (buf, count);
-		}
+	if (tud_cdc_available()) // data is available
+	{
+		cdc_itf = itf;
+		count = tud_cdc_n_read(itf, buf, sizeof(buf));
+		CAT_Buff_Write (buf, count);
 	}
+}
+
+/*
+void set_dsr(bool value) {
+
+    if (cdc_itf != 0xFF)
+	{
+		cdcd_interface_t* p_cdc = &_cdcd_itf[cdc_itf];
+
+		uint8_t packet[10];
+
+		packet[0] = 0xA1;	//   bmRequestType
+		packet[1] = CDC_NOTIF_SERIAL_STATE;	//   bNotification
+		packet[2] = 0x00;	//   wValue
+		packet[3] = 0x00;
+		packet[4] = 0x00;                        //   wIndex
+		packet[5] = 0x00;
+		packet[6] = 0x02;                        //   wLength
+		packet[7] = 0x00;
+		packet[8] = value ?  0x02 : 0x00; 
+		packet[9] = 0x00;
+
+		usbd_edpt_xfer(TUD_OPT_RHPORT, p_cdc->ep_notif, packet, sizeof(packet));
+	}
+}
+*/

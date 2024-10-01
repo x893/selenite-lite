@@ -1,4 +1,4 @@
-﻿/**
+/**
   *******************************************************************************
   *
   * @file    si5351a.c
@@ -256,7 +256,7 @@ void si5351_set_freqb (uint32_t fout)
 
 void si5351_power_down ()
 {
-  si5351_write (3, 0b11111111);       /* Disable all CLK outputs */
+	si5351_write(3, 0xFF);       /* Disable all CLK outputs */
 
 	/* Disable state: CLK2 HIGH state, CLK0 & CLK1 LOW state when disabled;
 	 * CLK2 needs to be in HIGH state to make sure that cap to gate is already charged,
@@ -264,20 +264,20 @@ void si5351_power_down ()
 	 * which had been at 0v whilst it was disabled, suddenly generating a 5vpp waveform,
 	 * which is “added to” the 0v filtered PWM output and causing the output FETs
 	 * to be driven with the full 5v pp.", see: https://forum.dl2man.de/viewtopic.php?t=146&p=1307#p1307 */
-  si5351_write (24, 0b00010000);
+	si5351_write(24, 0x10);
 
-  si5351_write (25, 0b00000000);      /* Disable state: LOW state when disabled */
+	si5351_write(25, 0x00);     /* Disable state: LOW state when disabled */
 
 	for (int addr = 16; addr != 24; addr++)
 	{
-    si5351_write (addr, 0b10000000);  /* Conserve power when output is disabled */
+		si5351_write(addr, 0x80); /* Conserve power when output is disabled */
 	}
 
-	si5351_write(187, 0);              /* Disable fanout (power-safe) */
+	si5351_write(187, 0);       /* Disable fanout (power-safe) */
 
 	/* To initialise things as they should: */
-	si5351_write(149, 0);              /* Disable spread spectrum enable */
-  si5351_write (183, 0b11010010);     /* Internal CL = 10 pF (default) */
+	si5351_write(149, 0);       /* Disable spread spectrum enable */
+	si5351_write(183, 0xD2);    /* Internal CL = 10 pF (default) */
 }
 
 
@@ -304,15 +304,13 @@ void Si5351a_Set_Freq (uint32_t fout, uint16_t i, uint16_t q)
 
 void Si5351a_Init(void)
 {
-  fxtal = (*(uint32_t*)(0x08007FF8));
-
 	si5351_power_down();               /* Reset si5351a chip */
 	HAL_Delay(100);
 
-	si5351_set_freqb(24576000U);       /* Set HSE = 24.576 MHz */
+	si5351_set_freqb(24576000u);       /* Set HSE = 24.576 MHz */
 	HAL_Delay(100);
 
-  si5351_write (3, 0b11111000);       /* Enable all CLK outputs */
+	si5351_write (3, 0xF8);       /* Enable all CLK outputs */
 }
 
 /****END OF FILE****/

@@ -28,8 +28,8 @@ tusb_desc_device_t const desc_device =
     .bDeviceProtocol    = MISC_PROTOCOL_IAD,
     .bMaxPacketSize0    = CFG_TUD_ENDPOINT0_SIZE,
 
-    .idVendor           = 0xCAFE,
-    .idProduct          = USB_PID,
+    .idVendor           = 0x0483, // 0xCAFE,
+    .idProduct          = 0x574B, // USB_PID,
     .bcdDevice          = 0x0100,
 
     .iManufacturer      = 0x01,
@@ -81,12 +81,12 @@ uint8_t const * tud_descriptor_device_cb(void)
   #define EPNUM_CDC_IN      0x85
 
 #else
-	#define EPNUM_AUDIO_IN    0x83
-	#define EPNUM_AUDIO_OUT   0x03
+	#define EPNUM_AUDIO_IN    0x01
+	#define EPNUM_AUDIO_OUT   0x01
 
 	#define EPNUM_CDC_NOTIF   0x82
-	#define EPNUM_CDC_OUT     0x01
-	#define EPNUM_CDC_IN      0x81
+	#define EPNUM_CDC_OUT     0x03
+	#define EPNUM_CDC_IN      0x83
 #endif
 
 uint8_t const desc_configuration[] =
@@ -98,7 +98,7 @@ uint8_t const desc_configuration[] =
     TUD_AUDIO_HEADSET_STEREO_DESCRIPTOR(2, EPNUM_AUDIO_OUT, EPNUM_AUDIO_IN | 0x80),
 
     // CDC: Interface number, string index, EP notification address and size, EP data address (out, in) and size.
-    TUD_CDC_DESCRIPTOR(ITF_NUM_CDC, 6, EPNUM_CDC_NOTIF, 8, EPNUM_CDC_OUT, EPNUM_CDC_IN, 64)
+	TUD_CDC_DESCRIPTOR(ITF_NUM_CDC, 6, EPNUM_CDC_NOTIF, 8, EPNUM_CDC_OUT, EPNUM_CDC_IN, 64)
 };
 
 // Invoked when received GET CONFIGURATION DESCRIPTOR
@@ -126,12 +126,12 @@ enum {
 char const *string_desc_arr[] =
 {
 	(const char[]) { 0x09, 0x04 },  // 0: is supported language is English (0x0409)
-	"TinyUSB",                      // 1: Manufacturer
-	"TinyUSB headset",              // 2: Product
+	"Selenite",                     // 1: Manufacturer
+	"Selenite TRX",                 // 2: Product
 	NULL,                           // 3: Serials will use unique ID if possible
-	"TinyUSB Speakers",             // 4: Audio Interface
-	"TinyUSB Microphone",           // 5: Audio Interface
-	"TinyUSB CDC",                  // 6: Audio Interface
+	"Selenite Line Out",            // 4: Audio Interface
+	"Selenite Line in",             // 5: Audio Interface
+	"Selenite CDC",                 // 6: Audio Interface
 };
 
 static uint16_t _desc_str[32 + 1];

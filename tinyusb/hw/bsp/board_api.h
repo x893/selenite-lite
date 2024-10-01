@@ -87,7 +87,7 @@ void board_led_write(bool state);
 uint32_t board_button_read(void);
 
 // Get board unique ID for USB serial number. Return number of bytes. Note max_len is typically 16
-TU_ATTR_WEAK size_t board_get_unique_id(uint8_t id[], size_t max_len);
+size_t board_get_unique_id(uint8_t id[], size_t max_len);
 
 // Get characters from UART. Return number of read bytes
 int board_uart_read(uint8_t *buf, int len);
@@ -146,10 +146,8 @@ static inline size_t board_usb_get_serial(uint16_t desc_str1[], size_t max_chars
 	size_t uid_len;
 
 	// TODO work with make, but not working with esp32s3 cmake
-	if ( board_get_unique_id ) {
-	    uid_len = board_get_unique_id(uid, sizeof(uid));
-	}
-	else
+	uid_len = board_get_unique_id(uid, sizeof(uid));
+	if ( uid_len == 0 )
 	{
 		// fixed serial string is 01234567889ABCDEF
 		uint32_t* uid32 = (uint32_t*) (uintptr_t) uid;
