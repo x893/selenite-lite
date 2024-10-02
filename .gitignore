@@ -2,6 +2,7 @@
 .dep/
 .settings/
 Debug/
+Debug-Private/
 Release/
 *.jdebug
 *.jdebug.user
@@ -21,3 +22,5 @@ JLinkLog.txt
 MDK-ARM/DebugConfig
 MDK-ARM/selenite-lite
 *.jdebug.user
+Private/
+*.launch

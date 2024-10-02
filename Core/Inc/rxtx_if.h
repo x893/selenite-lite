@@ -1,4 +1,4 @@
-/**
+﻿/**
   *******************************************************************************
   *
   * @file    ptt_if.h
@@ -100,12 +100,8 @@ uint32_t BCD_to_CAT (uint32_t);
 /* Private defines -----------------------------------------------------------*/
 
 #ifndef hi2c_tx
-#define hi2c_tx                                 hi2c1 //hi2c2
+#define hi2c_tx                                 hi2c1
 extern I2C_HandleTypeDef hi2c_tx;
-#endif
-
-#ifndef I2CTIMEOUT 
-#define I2CTIMEOUT                              10
 #endif
 
 #ifndef PCA9554_BUS_BASE_ADDR
