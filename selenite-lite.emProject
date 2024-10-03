@@ -105,6 +105,11 @@
       <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c" />
       <file file_name="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_adc.c" />
     </folder>
+    <folder Name="Private">
+      <file file_name="Private/fonts.c" />
+      <file file_name="Private/ili9341.c" />
+      <file file_name="Private/user_if.c" />
+    </folder>
     <folder Name="RTT">
       <file file_name="RTT/SEGGER_RTT.c" />
       <file file_name="RTT/SEGGER_RTT_printf.c" />

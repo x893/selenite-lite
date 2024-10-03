@@ -22,8 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include "rxtx_if.h"
 #include "bsp/board_api.h"
+#include "rxtx_if.h"
 #include "tusb.h"
 
 /* USER CODE END Includes */
@@ -84,49 +84,49 @@ static void MX_SPI1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-size_t board_get_unique_id (uint8_t id [], size_t max_len)
+size_t board_get_unique_id(uint8_t id[], size_t max_len)
 {
-  uint32_t deviceserial0, deviceserial1, deviceserial2;
+    uint32_t deviceserial0, deviceserial1, deviceserial2;
 
-  deviceserial0 = HAL_GetUIDw0 ();
-  deviceserial1 = HAL_GetUIDw1 ();
-  deviceserial2 = HAL_GetUIDw2 ();
-  deviceserial0 += deviceserial2;
+    deviceserial0 = HAL_GetUIDw0();
+    deviceserial1 = HAL_GetUIDw1();
+    deviceserial2 = HAL_GetUIDw2();
+    deviceserial0 += deviceserial2;
 
-  if (deviceserial0 != 0)
-  {
-    deviceserial0 = __REV (deviceserial0);
-    memcpy (&id [0], &deviceserial0, 4);
-    deviceserial1 = __REV (deviceserial1);
-    memcpy (&id [4], &deviceserial1, 2);
-    return 6;
-  }
-  return 0;
+    if (deviceserial0 != 0)
+    {
+        deviceserial0 = __REV(deviceserial0);
+        memcpy(&id[0], &deviceserial0, 4);
+        deviceserial1 = __REV(deviceserial1);
+        memcpy(&id[4], &deviceserial1, 2);
+        return 6;
+    }
+    return 0;
 }
 
-void board_init (void)
+void board_init(void)
 {
-  GPIO_InitTypeDef GPIO_InitStruct;
-  __HAL_RCC_GPIOA_CLK_ENABLE();
+    GPIO_InitTypeDef GPIO_InitStruct;
+    __HAL_RCC_GPIOA_CLK_ENABLE();
 
-  /* Configure USB D+ D- Pins */
-  GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
-  GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
-  HAL_GPIO_Init (GPIOA, &GPIO_InitStruct);
+    /* Configure USB D+ D- Pins */
+    GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
+    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
+    __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
 
-  USB_OTG_FS->GCCFG |= USB_OTG_GCCFG_NOVBUSSENS;
-  USB_OTG_FS->GCCFG &= ~USB_OTG_GCCFG_VBUSBSEN;
-  USB_OTG_FS->GCCFG &= ~USB_OTG_GCCFG_VBUSASEN;
+    USB_OTG_FS->GCCFG |= USB_OTG_GCCFG_NOVBUSSENS;
+    USB_OTG_FS->GCCFG &= ~USB_OTG_GCCFG_VBUSBSEN;
+    USB_OTG_FS->GCCFG &= ~USB_OTG_GCCFG_VBUSASEN;
 }
 
-void OTG_FS_IRQHandler (void)
+void OTG_FS_IRQHandler(void)
 {
-  tud_int_handler (0);
+    tud_int_handler(0);
 }
 
 /* USER CODE END 0 */
@@ -149,15 +149,15 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
 
-  MX_I2C3_Init ();
-  HAL_Delay (200);
+    MX_I2C3_Init();
+    HAL_Delay(200);
 
-  /* Set HSE = 24.576 MHz from VFO */
-  VFO_Init ();
-  HAL_Delay (200);
+    /* Set HSE = 24.576 MHz from VFO */
+    VFO_Init();
+    HAL_Delay(200);
 
   /* USER CODE END Init */
 
@@ -180,23 +180,26 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
-  RXTX_Init ();
+    // SPI_1LINE_TX(&hspi1);
+    __HAL_SPI_ENABLE(&hspi1);
+
+    RXTX_Init();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  board_init ();
-  tud_init (BOARD_TUD_RHPORT);
+    board_init();
+    tud_init(BOARD_TUD_RHPORT);
 
-  while (1)
-  {
-    RXTX_Handler ();
-    tud_task ();
+    while (1)
+    {
+        RXTX_Handler();
+        tud_task();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
+    }
   /* USER CODE END 3 */
 }
 
@@ -435,9 +438,9 @@ static void MX_RTC_Init(void)
 
   /* USER CODE BEGIN Check_RTC_BKUP */
 
-  /* Check for backup domain is working */
-  if (HAL_RTCEx_BKUPRead (&hrtc, RTC_BKP_DR1) == 0U)
-  {
+    /* Check for backup domain is working */
+    if (HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR1) == 0U)
+    {
   /* USER CODE END Check_RTC_BKUP */
 
   /** Initialize RTC and set the Time and Date
@@ -462,9 +465,9 @@ static void MX_RTC_Init(void)
   }
   /* USER CODE BEGIN RTC_Init 2 */
 
-    HAL_RTCEx_BKUPWrite (&hrtc, RTC_BKP_DR1, 0x80000000U);
-    /* Write to RTC_BKP_DR1 if the register is empty */
-  }
+        HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR1, 0x80000000U);
+        /* Write to RTC_BKP_DR1 if the register is empty */
+    }
   /* USER CODE END RTC_Init 2 */
 
 }
@@ -609,11 +612,11 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(ILI9341_LED_GPIO_Port, ILI9341_LED_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PC13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  /*Configure GPIO pin : PC13_Pin */
+  GPIO_InitStruct.Pin = PC13_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(PC13_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : S2_Pin S1_Pin QSE_EN_Pin QSD_EN_Pin */
   GPIO_InitStruct.Pin = S2_Pin|S1_Pin|QSE_EN_Pin|QSD_EN_Pin;
@@ -622,13 +625,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : ILI9341_DC_Pin ILI9341_CS_Pin ILI9341_RES_Pin ILI9341_LED_Pin
-                           I2S2_RES_Pin TX_Pin */
-  GPIO_InitStruct.Pin = ILI9341_DC_Pin|ILI9341_CS_Pin|ILI9341_RES_Pin|ILI9341_LED_Pin
-                          |I2S2_RES_Pin|TX_Pin;
+  /*Configure GPIO pins : ILI9341_DC_Pin ILI9341_CS_Pin */
+  GPIO_InitStruct.Pin = ILI9341_DC_Pin|ILI9341_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : ILI9341_RES_Pin ILI9341_LED_Pin */
+  GPIO_InitStruct.Pin = ILI9341_RES_Pin|ILI9341_LED_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : KEY_DAH_Pin KEY_DIT_Pin */
@@ -637,11 +645,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PB7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_7;
+  /*Configure GPIO pins : I2S2_RES_Pin TX_Pin */
+  GPIO_InitStruct.Pin = I2S2_RES_Pin|TX_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB7_Pin */
+  GPIO_InitStruct.Pin = PB7_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(PB7_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 3, 0);
@@ -665,14 +680,14 @@ static void MX_GPIO_Init(void)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
+    /* User can add his own implementation to report the HAL error return state */
 
-  __disable_irq ();
-  __BKPT(0);
-  while (1)
-  {
-    __NOP();
-  }
+    __disable_irq();
+    __BKPT(0);
+    while (1)
+    {
+        __NOP();
+    }
   /* USER CODE END Error_Handler_Debug */
 }
 
@@ -687,8 +702,8 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-	/* User can add his own implementation to report the file name and line number,
-	   ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+    /* User can add his own implementation to report the file name and line number,
+       ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

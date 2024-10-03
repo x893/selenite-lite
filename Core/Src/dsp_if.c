@@ -20,6 +20,7 @@
   /* Includes ------------------------------------------------------------------*/
 #include "dsp_if.h"
 #include "codec_if.h"
+#include "cw_gen.h"
 
 /* Private typedef -----------------------------------------------------------*/
 
@@ -39,6 +40,8 @@ DSP_Buff_TypeDef  dsp_in_buff;
 /* Private user code ---------------------------------------------------------*/
 
 /* External variables --------------------------------------------------------*/
+
+extern CW_Keyer cw_keyer;
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -215,7 +218,8 @@ void DSP_Out_Buff_Read(uint16_t* pbuf, uint16_t size)
 			dsp_out_buff.rd_ptr = 0U;
 		}
 	}
-	/* mix CW tone to speaker signal here*/
+  /* mix CW tone to speaker signal */
+  CW_Handler ((int16_t*)pbuf, (int16_t*)pbuf, size);
 }
 
 /**
@@ -376,10 +380,36 @@ void DSP_Set_Mode(uint8_t mode)
 
 void DSP_Init(void)
 {
+  /*
+  if (USBD_AUDIO_FREQ == 48000U)
+  {
+    I2S_IF.Init.AudioFreq = I2S_AUDIOFREQ_48K;
+  }
+
+  if (USBD_AUDIO_FREQ == 96000U)
+  {
+    I2S_IF.Init.AudioFreq = I2S_AUDIOFREQ_96K;
+  }
+
+  if (HAL_I2S_Init (&I2S_IF) != HAL_OK)
+  {
+    Error_Handler ();
+  }
+  */
+
 	i2s_buff_init();
 
   	Codec_Init (USBD_AUDIO_FREQ);
 	Codec_AF_Vol(20U);
+
+  cw_keyer.pitch = 7U;
+  cw_keyer.speed = 14U;
+
+  /* IAMBIC_B; IAMBIC_A; ULTIMATE; STRAIGHT */
+  cw_keyer.mode  = STRAIGHT;
+
+  CW_Set_Pitch (700U, USBD_AUDIO_FREQ);
+  CW_Set_Keyer ();
 }
 
 /****END OF FILE****/

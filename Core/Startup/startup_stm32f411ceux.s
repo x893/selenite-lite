@@ -122,6 +122,7 @@ Infinite_Loop:
 *******************************************************************************/
    .section  .isr_vector,"a",%progbits
   .type  g_pfnVectors, %object
+  .size  g_pfnVectors, .-g_pfnVectors
     
 g_pfnVectors:
   .word  _estack
@@ -229,9 +230,6 @@ g_pfnVectors:
   .word     SPI4_IRQHandler                   /* SPI4                         */
   .word     SPI5_IRQHandler                   /* SPI5                         */  
                     
-
-  .size  g_pfnVectors, .-g_pfnVectors
-
 /*******************************************************************************
 *
 * Provide weak aliases for each Exception handler to the Default_Handler. 

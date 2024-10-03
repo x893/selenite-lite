@@ -32,8 +32,8 @@ typedef struct
 } FontDef;
 
 /* Exported variables --------------------------------------------------------*/
-extern FontDef Font_7x10;
-extern FontDef Font_11x18;
-extern FontDef Font_16x26;
+extern const FontDef *Font_7x10;
+extern const FontDef *Font_11x18;
+extern const FontDef *Font_16x26;
 
 #endif /* __FONTS_H_ */

@@ -37,9 +37,22 @@ typedef struct
     uint8_t buff [CAT_BUFF_SIZE];
 } CAT_TypeDef;
 
+typedef enum
+{
+    FT817_SET_FREQ = 0x01,
+    FT817_TOGGLE_VFO = 0x81,
+    FT817_SPLIT_ON = 0x02,
+    FT817_SPLIT_OFF = 0x82,
+    FT817_GET_FREQ = 0x03,
+    FT817_MODE_SET = 0x07,
+    FT817_PTT_ON = 0x08,
+    FT817_PTT_OFF = 0x88,
+    FT817_READ_TX_STATE = 0xF7,
+} FT817_COMMAND;
+
 TRX_TypeDef trx;
 PTT_TypeDef ptt;
-CAT_TypeDef cat = { .wr_ptr = 0, .rd_ptr = 0, .read_tx_state = 0 };
+CAT_TypeDef cat;
 
 extern RTC_HandleTypeDef hrtc;
 
@@ -67,26 +80,13 @@ uint32_t HEX_to_BCD (uint32_t input)
     {
         for (i = 26; i >= 0; i--)
         {
-            if ((output & 0xF) >= 5)
-                output += 3;
-
-            if (((output & 0xF0) >> 4) >= 5)
-                output += (3 << 4);
-
-            if (((output & 0xF00) >> 8) >= 5)
-                output += (3 << 8);
-
-            if (((output & 0xF000) >> 12) >= 5)
-                output += (3 << 12);
-
-            if (((output & 0xF0000) >> 16) >= 5)
-                output += (3 << 16);
-
-            if (((output & 0xF00000) >> 20) >= 5)
-                output += (3 << 20);
-
-            if (((output & 0xF000000) >> 24) >= 5)
-                output += (3 << 24);
+      if ((output  & 0xF) >= 5)               { output += 3; }
+      if (((output & 0xF0) >> 4) >= 5)        { output += (3 << 4); }
+      if (((output & 0xF00) >> 8) >= 5)       { output += (3 << 8); }
+      if (((output & 0xF000) >> 12) >= 5)     { output += (3 << 12); }
+      if (((output & 0xF0000) >> 16) >= 5)    { output += (3 << 16); }
+      if (((output & 0xF00000) >> 20) >= 5)   { output += (3 << 20); }
+      if (((output & 0xF000000) >> 24) >= 5)  { output += (3 << 24); }
 
             output = (output << 1) | ((input >> i) & 1);
         }
@@ -159,8 +159,9 @@ void ptt_set_bpf (uint32_t tune_new)
     uint8_t lpf = 0x01;
 
     if (tune_new > 2000000U)
+  {
         lpf = 0x02;
-
+  }
     if (tune_new > 4000000U)
     {
       bpf = 0x04;
@@ -177,7 +178,10 @@ void ptt_set_bpf (uint32_t tune_new)
         lpf = 0x10;
     }
     if (tune_new > 24000000U)
+  {
         lpf = 0x20;
+  }
+
 
     if (bpf & 0x02)
     {
@@ -223,6 +227,7 @@ void ptt_set_bpf (uint32_t tune_new)
     }
 
     pca9554_write (1, lpf);
+
 }
 
 /**
@@ -239,7 +244,9 @@ void ptt_set_tx (void)
     if (!trx.is_tx)
     {
         if (trx.split)
+    {
             VFO_Toggle_VFO ();
+    }
 
         trx.is_tx = 1U;
         cat.read_tx_state &= 0x7F;
@@ -247,10 +254,14 @@ void ptt_set_tx (void)
         DSP_Set_TX ();
 
         if (trx.vfo)
+    {
             ptt_set_bpf (trx.vfob);
+    }
         else
+    {
             ptt_set_bpf (trx.vfoa);
     }
+}
 }
 
 /**
@@ -264,14 +275,8 @@ void ptt_set_tx (void)
 
 void ptt_set_rx (void)
 {
-    if (ptt.cat_is_on ||
-        ptt.key_dah_is_on ||
-        ptt.key_dit_is_on ||
-        ptt.dtr_is_on ||
-        ptt.rts_is_on)
-    {
-        return;
-    }
+  if (ptt.cat_is_on || ptt.key_dah_is_on || ptt.key_dit_is_on ||
+      ptt.dtr_is_on || ptt.rts_is_on) return;
 
     if (trx.is_tx)
     {
@@ -279,15 +284,21 @@ void ptt_set_rx (void)
         cat.read_tx_state |= 0x80;
 
         if (trx.split)
+    {
             VFO_Toggle_VFO ();
+    }
 
         DSP_Set_RX ();
 
         if (trx.vfo)
+    {
             ptt_set_bpf (trx.vfob);
+    }
         else
+    {
             ptt_set_bpf (trx.vfoa);
     }
+}
 }
 
 /**
@@ -334,10 +345,13 @@ uint8_t ptt_cat_tx (uint8_t cat)
         ptt.cat_is_on = cat;
 
         if (cat)
+    {
             ptt_set_tx ();
+    }
         else
+    {
             ptt_set_rx ();
-
+    }
         retval = 0x00;
     }
     return retval;
@@ -383,18 +397,6 @@ uint8_t ptt_cat_tx (uint8_t cat)
  * <p>0x04 = AM;  0x08 = FM;  0x0A = DIG; 0x0C = PKT</p>
  *
  */
-typedef enum
-{
-    FT817_SET_FREQ = 0x01,
-    FT817_TOGGLE_VFO = 0x81,
-    FT817_SPLIT_ON = 0x02,
-    FT817_SPLIT_OFF = 0x82,
-    FT817_GET_FREQ = 0x03,
-    FT817_MODE_SET = 0x07,
-    FT817_PTT_ON = 0x08,
-    FT817_PTT_OFF = 0x88,
-    FT817_READ_TX_STATE = 0xF7,
-} FT817_COMMAND;
 
 #define PACKAGE_P1_IDX  0
 #define PACKAGE_CMD_IDX 4
@@ -430,29 +432,37 @@ void cat_cmd_handler (void)
         case FT817_READ_TX_STATE:
             reply = cat.read_tx_state;
             break;
+
         case FT817_SET_FREQ:
             *(uint32_t*) cat.get_freq = *(uint32_t*) &package [PACKAGE_P1_IDX];
             vfo_set_tune_cat ();
             break;
+
         case FT817_MODE_SET:
             cat.get_freq [4] = package [PACKAGE_P1_IDX];
             PTT_Set_Mode (package [PACKAGE_P1_IDX]);
             break;
+
         case FT817_TOGGLE_VFO:
             VFO_Toggle_VFO ();
             break;
+
         case FT817_SPLIT_ON:
             VFO_Set_Split (1);
             break;
+
         case FT817_SPLIT_OFF:
             VFO_Set_Split (0);
             break;
+
         case FT817_PTT_ON:
             reply = ptt_cat_tx (1);
             break;
+
         case FT817_PTT_OFF:
             reply = ptt_cat_tx (0);
             break;
+
         default:
             break;
         }
@@ -549,10 +559,7 @@ uint32_t VFO_Get_Tune_BCD (void)
 
 void VFO_Toggle_VFO (void)
 {
-  if (trx.is_tx)
-  {
-    return;
-  }
+  if (trx.is_tx) { return; }
 
   uint32_t mode_bkup;
   mode_bkup = HAL_RTCEx_BKUPRead (&hrtc, RTC_BKP_DR1);
@@ -582,10 +589,7 @@ void VFO_Toggle_VFO (void)
 
 void VFO_Set_Split (uint8_t split)
 {
-  if (trx.is_tx)
-  {
-    return;
-  }
+  if (trx.is_tx) { return; }
 
   uint32_t mode_bkup;
   mode_bkup = HAL_RTCEx_BKUPRead (&hrtc, RTC_BKP_DR1);
@@ -614,10 +618,7 @@ void VFO_Set_Split (uint8_t split)
 
 void PTT_Set_Mode (uint8_t trx_mode)
 {
-  if (trx.is_tx)
-  {
-    return;
-  }
+  if (trx.is_tx) { return; }
 
   uint32_t mode_bkup;
 
@@ -664,7 +665,7 @@ void PTT_Set_Mode (uint8_t trx_mode)
     HAL_RTCEx_BKUPWrite (&hrtc, RTC_BKP_DR1, mode_bkup);
   }
 
-  //DSP_Set_Mode (trx_mode);
+  DSP_Set_Mode (trx_mode);
 }
 
 /**
@@ -792,10 +793,8 @@ void RXTX_Init (void)
     {
         trx.mode = (uint8_t) (mode_bkup & 0x0000000FU);
 
-        if (mode_bkup & 0x00000010U)
-            trx.vfo = 1U;
-        if (mode_bkup & 0x00000020U)
-            trx.split = 1U;
+    if (mode_bkup & 0x00000010U) { trx.vfo   = 1U; }
+    if (mode_bkup & 0x00000020U) { trx.split = 1U; }
     }
     else
     {
@@ -892,6 +891,7 @@ void RXTX_Handler (void)
         trx.displayed = trx.sysclock;
         UI_Handler ();
     }
+
 }
 
 /**
@@ -908,17 +908,29 @@ void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
     {
     case KEY_DAH_Pin:
         ptt.key_dah_is_on = !HAL_GPIO_ReadPin (KEY_DAH_GPIO_Port, KEY_DAH_Pin);
+
         if (ptt.key_dah_is_on)
+      {
             ptt_set_tx ();
+      }
         else
+      {
             ptt.key_off_time = trx.sysclock;
+      }
+
         break;
     case KEY_DIT_Pin:
         ptt.key_dit_is_on = !HAL_GPIO_ReadPin (KEY_DIT_GPIO_Port, KEY_DIT_Pin);
+
         if (ptt.key_dit_is_on)
+      {
             ptt_set_tx ();
+      }
         else
+      {
             ptt.key_off_time = trx.sysclock;
+      }
+
         break;
     }
 }
