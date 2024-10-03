@@ -73,8 +73,8 @@ extern  I2S_HandleTypeDef        I2S_IF;
 
 typedef struct
 {
-  uint16_t rx [I2S_BUFF_SIZE];
-  uint16_t tx [I2S_BUFF_SIZE];
+    uint16_t rx [I2S_BUFF_SIZE];
+    uint16_t tx [I2S_BUFF_SIZE];
 } I2S_Buff_TypeDef;
 
 #define DSP_BUFF_PACKET_SIZE     (uint16_t)(USBD_AUDIO_FREQ / 1000U)                       /* DSP buffer packet size in samples */
@@ -85,11 +85,11 @@ typedef struct
 
 typedef struct
 {
-  int16_t  i [DSP_BUFF_SIZE];
-  int16_t  q [DSP_BUFF_SIZE];
-  uint8_t  buff_enable;
-  uint16_t rd_ptr;
-  uint16_t wr_ptr;
+    int16_t  i [DSP_BUFF_SIZE];
+    int16_t  q [DSP_BUFF_SIZE];
+    uint8_t  buff_enable;
+    uint16_t rd_ptr;
+    uint16_t wr_ptr;
 } DSP_Buff_TypeDef;
 
 #endif /* INC_DSP_IF_H_ */
