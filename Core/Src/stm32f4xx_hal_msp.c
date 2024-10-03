@@ -1,4 +1,4 @@
-﻿
+
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -68,6 +68,7 @@ extern DMA_HandleTypeDef hdma_spi1_tx;
   */
 void HAL_MspInit(void)
 {
+
   /* USER CODE BEGIN MspInit 0 */
 
   /* USER CODE END MspInit 0 */
@@ -114,6 +115,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
   /* USER CODE BEGIN ADC1_MspInit 1 */
 
   /* USER CODE END ADC1_MspInit 1 */
+
   }
 
 }
@@ -373,6 +375,7 @@ void HAL_I2S_MspInit(I2S_HandleTypeDef* hi2s)
   /* USER CODE BEGIN SPI2_MspInit 1 */
 
   /* USER CODE END SPI2_MspInit 1 */
+
   }
 
 }
@@ -428,6 +431,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
   /* USER CODE BEGIN RTC_MspInit 0 */
 
   /* USER CODE END RTC_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
@@ -442,6 +446,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
   /* USER CODE BEGIN RTC_MspInit 1 */
 
   /* USER CODE END RTC_MspInit 1 */
+
   }
 
 }
@@ -519,6 +524,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
   /* USER CODE BEGIN SPI1_MspInit 1 */
 
   /* USER CODE END SPI1_MspInit 1 */
+
   }
 
 }
@@ -594,6 +600,7 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef* htim_encoder)
   /* USER CODE BEGIN TIM2_MspInit 1 */
 
   /* USER CODE END TIM2_MspInit 1 */
+
   }
 
 }
@@ -632,4 +639,3 @@ void HAL_TIM_Encoder_MspDeInit(TIM_HandleTypeDef* htim_encoder)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-
