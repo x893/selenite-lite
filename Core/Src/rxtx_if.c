@@ -729,6 +729,10 @@ __weak void UI_Init (void)
 {
 }
 
+__weak void UI_Handler(void)
+{
+}
+
 /**
  * @brief This function initialize PTT, VFO and DSP
  *
@@ -859,10 +863,6 @@ void CAT_Buff_Write (uint8_t *pbuf, uint32_t len)
 void PTT_Key_RX (void)
 {
     ptt.key_off_time = trx.sysclock;
-}
-
-__weak void UI_Handler(void)
-{
 }
 
 /**
