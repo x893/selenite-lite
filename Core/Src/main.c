@@ -59,6 +59,8 @@ DMA_HandleTypeDef hdma_spi1_tx;
 
 TIM_HandleTypeDef htim2;
 
+PCD_HandleTypeDef hpcd_USB_OTG_FS;
+
 DMA_HandleTypeDef hdma_memtomem_dma2_stream0;
 /* USER CODE BEGIN PV */
 
@@ -78,6 +80,7 @@ static void MX_I2S2_Init(void);
 static void MX_RTC_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_USB_OTG_FS_PCD_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -105,30 +108,6 @@ size_t board_get_unique_id(uint8_t id[], size_t max_len)
     return 0;
 }
 
-void board_init(void)
-{
-    GPIO_InitTypeDef GPIO_InitStruct;
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-
-    /* Configure USB D+ D- Pins */
-    GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
-
-    USB_OTG_FS->GCCFG |= USB_OTG_GCCFG_NOVBUSSENS;
-    USB_OTG_FS->GCCFG &= ~USB_OTG_GCCFG_VBUSBSEN;
-    USB_OTG_FS->GCCFG &= ~USB_OTG_GCCFG_VBUSASEN;
-}
-
-void OTG_FS_IRQHandler(void)
-{
-    tud_int_handler(0);
-}
 
 /* USER CODE END 0 */
 
@@ -179,6 +158,7 @@ int main(void)
   MX_RTC_Init();
   MX_TIM2_Init();
   MX_SPI1_Init();
+  MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
 
     // SPI_1LINE_TX(&hspi1);
@@ -190,7 +170,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-    board_init();
+
     tud_init(BOARD_TUD_RHPORT);
 
     while (1)
@@ -557,6 +537,41 @@ static void MX_TIM2_Init(void)
   /* USER CODE BEGIN TIM2_Init 2 */
 
   /* USER CODE END TIM2_Init 2 */
+
+}
+
+/**
+  * @brief USB_OTG_FS Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USB_OTG_FS_PCD_Init(void)
+{
+
+  /* USER CODE BEGIN USB_OTG_FS_Init 0 */
+
+  /* USER CODE END USB_OTG_FS_Init 0 */
+
+  /* USER CODE BEGIN USB_OTG_FS_Init 1 */
+
+  /* USER CODE END USB_OTG_FS_Init 1 */
+  hpcd_USB_OTG_FS.Instance = USB_OTG_FS;
+  hpcd_USB_OTG_FS.Init.dev_endpoints = 4;
+  hpcd_USB_OTG_FS.Init.speed = PCD_SPEED_FULL;
+  hpcd_USB_OTG_FS.Init.dma_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.phy_itface = PCD_PHY_EMBEDDED;
+  hpcd_USB_OTG_FS.Init.Sof_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.low_power_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.lpm_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.vbus_sensing_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.use_dedicated_ep1 = DISABLE;
+  if (HAL_PCD_Init(&hpcd_USB_OTG_FS) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USB_OTG_FS_Init 2 */
+
+  /* USER CODE END USB_OTG_FS_Init 2 */
 
 }
 

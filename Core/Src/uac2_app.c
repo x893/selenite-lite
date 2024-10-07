@@ -1,9 +1,10 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <string.h>
 
 #include "bsp/board_api.h"
 #include "tusb.h"
 #include "usb_descriptors.h"
+//
 
 enum
 {
@@ -57,6 +58,7 @@ static bool tud_audio_clock_get_request(uint8_t rhport, audio_control_request_t 
         if (request->bRequest == AUDIO_CS_REQ_CUR)
         {
             TU_LOG1("Clock get current freq %" PRIu32 "\r\n", current_sample_rate);
+
             audio_control_cur_4_t curf = { (int32_t)tu_htole32(current_sample_rate) };
             return tud_audio_buffer_and_schedule_control_xfer(rhport, (tusb_control_request_t const*)request, &curf, sizeof(curf));
         }
@@ -132,8 +134,7 @@ static bool tud_audio_feature_unit_get_request(uint8_t rhport, audio_control_req
     {
         if (request->bRequest == AUDIO_CS_REQ_RANGE)
         {
-            audio_control_range_2_n_t(1) range_vol =
-            {
+            audio_control_range_2_n_t(1) range_vol = {
                 .wNumSubRanges = tu_htole16(1),
                 .subrange[0] = {.bMin = tu_htole16(-VOLUME_CTRL_50_DB), tu_htole16(VOLUME_CTRL_0_DB), tu_htole16(256) }
             };
@@ -148,7 +149,6 @@ static bool tud_audio_feature_unit_get_request(uint8_t rhport, audio_control_req
             return tud_audio_buffer_and_schedule_control_xfer(rhport, (tusb_control_request_t const*)request, &cur_vol, sizeof(cur_vol));
         }
     }
-
     TU_LOG1("Feature unit get request not supported, entity = %u, selector = %u, request = %u\r\n",
             request->bEntityID, request->bControlSelector, request->bRequest);
 
@@ -166,15 +166,21 @@ static bool tud_audio_feature_unit_set_request(uint8_t rhport, audio_control_req
     if (request->bControlSelector == AUDIO_FU_CTRL_MUTE)
     {
         TU_VERIFY(request->wLength == sizeof(audio_control_cur_1_t));
+
         mute[request->bChannelNumber] = ((audio_control_cur_1_t const*)buf)->bCur;
+
         TU_LOG1("Set channel %d Mute: %d\r\n", request->bChannelNumber, mute[request->bChannelNumber]);
+
         return true;
     }
     if (request->bControlSelector == AUDIO_FU_CTRL_VOLUME)
     {
         TU_VERIFY(request->wLength == sizeof(audio_control_cur_2_t));
+
         volume[request->bChannelNumber] = ((audio_control_cur_2_t const*)buf)->bCur;
+
         TU_LOG1("Set channel %d volume: %d dB\r\n", request->bChannelNumber, volume[request->bChannelNumber] / 256);
+
         return true;
     }
 
@@ -214,6 +220,7 @@ bool tud_audio_set_req_entity_cb(uint8_t rhport, tusb_control_request_t const* p
 
     TU_LOG1("Set request not handled, entity = %d, selector = %d, request = %d\r\n",
             request->bEntityID, request->bControlSelector, request->bRequest);
+
     return false;
 }
 
@@ -224,10 +231,7 @@ bool tud_audio_set_itf_close_EP_cb(uint8_t rhport, tusb_control_request_t const*
     uint8_t const itf = tu_u16_low(tu_le16toh(p_request->wIndex));
     uint8_t const alt = tu_u16_low(tu_le16toh(p_request->wValue));
 
-    TU_LOG3("Call - %s\r\n", __FUNCTION__);
-
-    if (ITF_NUM_AUDIO_STREAMING_SPK == itf && alt == 0)
-    {
+    if (ITF_NUM_AUDIO_STREAMING_SPK == itf && alt == 0) {
         // Audio streaming stop
     }
     return true;
@@ -240,9 +244,7 @@ bool tud_audio_set_itf_cb(uint8_t rhport, tusb_control_request_t const* p_reques
     uint8_t const alt = tu_u16_low(tu_le16toh(p_request->wValue));
 
     TU_LOG2("Set interface %d alt %d\r\n", itf, alt);
-
-    if (ITF_NUM_AUDIO_STREAMING_SPK == itf && alt != 0)
-    {
+    if (ITF_NUM_AUDIO_STREAMING_SPK == itf && alt != 0) {
         // Audio streaming start
     }
 
@@ -261,8 +263,6 @@ bool tud_audio_rx_done_pre_read_cb(uint8_t rhport, uint16_t n_bytes_received, ui
     (void)ep_out;
     (void)cur_alt_setting;
 
-    TU_LOG3("Call - %s\r\n", __FUNCTION__);
-
     spk_data_size = tud_audio_read(spk_buf, n_bytes_received);
     tud_audio_write(spk_buf, n_bytes_received);
 
@@ -275,8 +275,6 @@ bool tud_audio_tx_done_pre_load_cb(uint8_t rhport, uint8_t itf, uint8_t ep_in, u
     (void)itf;
     (void)ep_in;
     (void)cur_alt_setting;
-
-    TU_LOG3("Call - %s\r\n", __FUNCTION__);
 
     // This callback could be used to fill microphone data separately
     return true;

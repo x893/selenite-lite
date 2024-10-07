@@ -77,6 +77,10 @@ void ILI9341_DrawImage (uint16_t x, uint16_t y, uint16_t w, uint16_t h, const ui
 void ILI9341_InvertColors (bool invert);
 // void ILI9341_WriteVertical (uint16_t x, uint16_t y, const char* str, const FontDef *font, uint16_t color, uint16_t bgcolor);
 
+void SetColors(uint16_t fg_color, uint16_t bg_color);
+void SetFont(const FontDef *font);
+void ILI9341_WriteStringEx(uint16_t x, uint16_t y, const char* str);
+
 #ifdef __cplusplus
 }
 #endif
